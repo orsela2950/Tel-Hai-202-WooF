@@ -1,2 +1,4 @@
-def is_request_harmful(request):
-    return False
+
+class HTTP_checker:
+    def is_request_harmful(request):
+        return False
