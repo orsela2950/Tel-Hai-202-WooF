@@ -2,24 +2,26 @@ import requests
 from SecurityRuleEngine import SecurityRuleEngine
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
+import uvicorn
 import serverIfnfo
 import ssl #for later - for htttps support
-
-#python -m uvicorn WooF_Main:app
 
 app = FastAPI()
 #app.add_security_rule_engine()
 #app.add_logger(Logger())
 
 
-@app.get("/")
-async def inspect_request(request: Request, test: int = 999):
+@app.get("/{path}")
+async def inspect_request(request: Request, path: str):
+    print("path: {}".format(path))
     #check if the requests host matches the servers url
     if "host" in request.headers and request.headers["host"].startswith(serverIfnfo.URL):  
         return "good!"
     return "not good!"
 
 
+# Run the FastAPI app using uvicorn and specify the host and port to listen on
+uvicorn.run(app, port=8000)
 
 """commented out
     @app.post("/security_rules")
