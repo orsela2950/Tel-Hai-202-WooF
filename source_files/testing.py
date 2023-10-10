@@ -37,10 +37,13 @@ async def proxy(path: str, request: fastapi.Request):
         print("method: "+ request.method)
         print("headers: "+ str(modified_headers))
         print("ipead_url: "+ ipead_url)
-        #the program crashes here
+        #the program crashes when
         response = requests.request(
-        method='GET',
-        url='http://127.0.0.1:80',)
+        method=request.method,
+        url=ipead_url,
+        headers=modified_headers,
+        data=request.body,
+        )
         return response
 
     except Exception as e:
