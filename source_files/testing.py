@@ -1,7 +1,7 @@
 import fastapi
-import requests
-import uvicorn
+from uvicorn import run
 import serverIfnfo
+import httpx
 
 # Create a FastAPI app instance
 app = fastapi.FastAPI()
@@ -18,7 +18,6 @@ async def proxy(path: str, request: fastapi.Request):
     
     print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
     
-    
     #----------------
     #make the check here and send back the response from the web server
     #----------------
@@ -31,28 +30,20 @@ async def proxy(path: str, request: fastapi.Request):
     if "X-Forwarded-For" not in modified_headers.keys():
         modified_headers["X-Forwarded-For"] = request.client.host
     modified_headers["host"] = serverIfnfo.URL
-    # Forward the incoming request to the original destination and get the response
     
+    # Forward the incoming request to the original destination and get the response
     try:
-        print("method: "+ request.method)
-        print("headers: "+ str(modified_headers))
-        print("ipead_url: "+ ipead_url)
-        #the program crashes when
-        response = requests.request(
-        method=request.method,
-        url=ipead_url,
-        headers=modified_headers,
-        data=request.body,
-        )
-        return response
-
+        client = httpx.Client()
+        res = client.get(ipead_url, headers=modified_headers)
+        
+        return res.content
     except Exception as e:
-        print("exception in respons===============================================================")
+        print("exception in respons from webserver:" + ipead_url)
         print(e)
-    return "error in requestin to web server"
+    return "error in requesting to web server"
 
 # Run the FastAPI app using uvicorn and specify the host and port to listen on
-uvicorn.run(app, port=8000)
+run(app, port=8000)
 
 
 
