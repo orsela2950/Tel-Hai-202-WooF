@@ -32,15 +32,16 @@ async def proxy(path: str, request: fastapi.Request):
     modified_headers["host"] = serverIfnfo.URL
     
     # Forward the incoming request to the original destination and get the response
-    try:
-        client = httpx.Client()
-        res = client.get(ipead_url, headers=modified_headers)
+    client = httpx.Client()
+    response = client.get(ipead_url, headers=modified_headers)
         
-        return res.content
-    except Exception as e:
-        print("exception in respons from webserver:" + ipead_url)
-        print(e)
-    return "error in requesting to web server"
+
+    # Check the size and complexity of the response object
+    if len(response.content) > 1024 * 1024:
+        # The response object is too large
+        raise Exception("Response object is too large")
+
+    return fastapi.Response(content=response.content, headers=response.headers, status_code=response.status_code)
 
 # Run the FastAPI app using uvicorn and specify the host and port to listen on
 run(app, port=8000)
