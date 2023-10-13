@@ -2,7 +2,10 @@ from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 import uvicorn
 import os
+from urllib.parse import urlparse
+
 app = FastAPI()
+
 
 async def get_favicon_path():
     """Returns the full path to the favicon ICO file placed near the program."""
@@ -12,9 +15,10 @@ async def get_favicon_path():
     favicon_path = os.path.join(program_dir, "favicon.ico")
     return favicon_path
 
+
 @app.get("/")
 async def root(request: Request):
-    return "requested host "+ request.headers.get("Host")
+    return "requested host " + request.headers.get("Host")
 
 @app.get("/favicon.ico")
 async def root():
@@ -22,7 +26,11 @@ async def root():
     if os.path.isfile(favicon_path):
         return FileResponse(favicon_path)
     print("[!] cant find favicon")
-    return null
+    return None
+
+
+
+
 print("-= ==WEBSERVER TESTER== =-")
 # Run the FastAPI app using uvicorn and specify the host and port to listen on
-uvicorn.run(app, port=80)
+uvicorn.run(app,port=80)
