@@ -16,16 +16,18 @@ class SecurityRuleEngine:
 
         for rule in self.rules:
             if re.search(rule, request_url):
-                return True
+                # The request is malicious, so log it and block it
+                self.log_security_break(request,rule)
+                return rule
 
-        return False
+        return None
 
     def get_attack_name(self, rule):
         # Get the name of the attack
         attack_name = rule.split()[0] if rule else ""
         return attack_name
 
-    def log_security_break(self, request):
+    def log_security_break(self, request,rule):
         # Log the security break
         with open("security.log", "a") as log_file:
             log_file.write(
@@ -33,7 +35,7 @@ class SecurityRuleEngine:
                     datetime.datetime.now(),
                     request.client.host,
                     request.url,
-                    self.get_attack_name(request),
+                    self.get_attack_name(rule),
                     re.sub(r"[<>&]", r"\&", str(request.headers)),
                     re.sub(r"[<>&]", r"\&", str(request.body)),
                 )

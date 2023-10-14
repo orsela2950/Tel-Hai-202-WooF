@@ -37,11 +37,11 @@ async def proxy(path: str, request: fastapi.Request):
         # Log the request
         log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.datetime.now(), request.client.host,request.client.port,url,ipead_url))
 
-    # Check if the request is malicious
-    if rule_engine.is_request_malicious(request):
-        # The request is malicious, so log it and block it
-        rule_engine.log_security_break(request)
-        raise Exception("Request is malicious")
+    malicious_rule = rule_engine.is_request_malicious(request)
+    if malicious_rule:
+        error_response = f"Malicious request detected: {malicious_rule}"
+        return fastapi.Response(content=error_response, status_code=400)
+
 
     modified_headers = {}
     for pair in request.headers.raw:
