@@ -1,4 +1,5 @@
-from datetime import datetime
+import datetime
+import re
 
 
 class SecurityRuleEngine:
@@ -9,17 +10,31 @@ class SecurityRuleEngine:
         self.rules.append(rule)
 
     def is_request_malicious(self, request):
-        return False  # just for now
+        request_url = request.url.path
+        if not request_url:
+            return False
+
         for rule in self.rules:
-            if rule in request.url:
+            if re.search(rule, request_url):
                 return True
 
         return False
 
+    def get_attack_name(self, rule):
+        # Get the name of the attack
+        attack_name = rule.split()[0] if rule else ""
+        return attack_name
 
-class Logger:
-    def __init__(self):
-        self.file = open("waf.log", "w")
-
-    def log(self, message: str):
-        self.file.write(datetime.datetime.now() + ' | ' + message + "\n")
+    def log_security_break(self, request):
+        # Log the security break
+        with open("security.log", "a") as log_file:
+            log_file.write(
+                "[{}] Malicious request detected from {} to {}: {} ({})\n".format(
+                    datetime.datetime.now(),
+                    request.client.host,
+                    request.url,
+                    self.get_attack_name(request),
+                    re.sub(r"[<>&]", r"\&", str(request.headers)),
+                    re.sub(r"[<>&]", r"\&", str(request.body)),
+                )
+            )
