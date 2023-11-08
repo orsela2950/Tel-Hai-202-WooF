@@ -3,7 +3,7 @@ import fastapi
 from uvicorn import run
 import serverIfnfo
 import httpx
-from SecurityRuleEngine import SecurityRuleEngine
+from Security.SecurityRuleEngine import SecurityRuleEngine
 
 # Create a SecurityRuleEngine instance
 rule_engine = SecurityRuleEngine()
@@ -33,7 +33,7 @@ async def proxy(path: str, request: fastapi.Request):
     # Log the request
     print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
 
-    with open("waf.log", "a") as log_file:
+    with open("Logs\waf.log", "a") as log_file:
         # Log the request
         log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.datetime.now(), request.client.host,request.client.port,url,ipead_url))
 

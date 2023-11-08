@@ -29,7 +29,7 @@ class SecurityRuleEngine:
 
     def log_security_break(self, request,rule):
         # Log the security break
-        with open("security.log", "a") as log_file:
+        with open("Security\Logs\securityEvents.log", "a") as log_file:
             log_file.write(
                 "[{}] Malicious request detected from {} to {}: {} ({})\n".format(
                     datetime.datetime.now(),
