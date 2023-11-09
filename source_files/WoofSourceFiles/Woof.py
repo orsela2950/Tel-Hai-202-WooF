@@ -1,8 +1,8 @@
 import datetime
 import fastapi
 from uvicorn import run
-import serverIfnfo
 import httpx
+import serverIfnfo
 from Security.SecurityRuleEngine import SecurityRuleEngine
 
 # Create a SecurityRuleEngine instance
@@ -47,8 +47,7 @@ async def proxy(path: str, request: fastapi.Request):
     for pair in request.headers.raw:
         modified_headers[pair[0].decode()] = pair[1].decode()
     # add the x forward header
-    if "X-Forwarded-For" not in modified_headers.keys():
-        modified_headers["X-Forwarded-For"] = request.client.host
+    modified_headers["X-Forwarded-For"] = request.client.host
     modified_headers["host"] = serverIfnfo.URL
 
 
