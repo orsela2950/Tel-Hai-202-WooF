@@ -7,7 +7,7 @@ class XSS(SecurityBreak):
      self.name = "Cross Site Scripting (XSS)"
     
     def checkThreats(request: fastapi.Request):
-        pass
+        return None
     
     def getName(self):
         return self.name

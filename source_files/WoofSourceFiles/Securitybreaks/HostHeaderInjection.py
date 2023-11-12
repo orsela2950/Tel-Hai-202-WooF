@@ -7,7 +7,7 @@ class HostHeaderInjection(SecurityBreak):
      self.name = "HTTP Host Header Injection"
     
     def checkThreats(request: fastapi.Request):
-        pass
+        return None
     
     def getName(self):
         return self.name

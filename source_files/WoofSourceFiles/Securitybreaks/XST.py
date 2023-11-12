@@ -7,7 +7,7 @@ class XST(SecurityBreak):
      self.name = "Cross Site Tracing (XST)"
     
     def checkThreats(request: fastapi.Request):
-        pass
+        return None
     
     def getName(self):
         return self.name

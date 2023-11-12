@@ -1,26 +1,27 @@
 import datetime
 import re
-
+import fastapi
+import Securitybreaks.SecurityBreak as SecurityBreak
 
 class SecurityRuleEngine:
     def __init__(self):
-        self.rules = []
+        self.rules = [] # this will be a list of the security break interface object
 
-    def add_rule(self, rule: str):
+    def add_rule(self, rule: SecurityBreak):
         self.rules.append(rule)
 
-    def is_request_malicious(self, request):
+    def is_request_malicious(self, request : fastapi.Request, clientIp : str):
         request_url = request.url.path
         if not request_url:
-            return False
-
+            return None
+        
         for rule in self.rules:
-            if re.search(rule, request_url):
+            results = rule.checkThreats(request, clientIp)
+            if results:
                 # The request is malicious, so log it and block it
                 self.log_security_break(request,rule)
                 return rule
-
-        return None
+        return None # if no rule apllied to the request
 
     def get_attack_name(self, rule):
         # Get the name of the attack

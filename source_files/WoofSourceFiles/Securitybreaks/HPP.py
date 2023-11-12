@@ -7,7 +7,7 @@ class HPP(SecurityBreak):
      self.name = "HTTP Parameter Pollution"
     
     def checkThreats(request: fastapi.Request):
-        pass
+        return None
     
     def getName(self):
         return self.name
