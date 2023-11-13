@@ -1,4 +1,4 @@
-import SecurityBreak
+from Securitybreaks.SecurityBreak import SecurityBreak
 import fastapi
 
 
