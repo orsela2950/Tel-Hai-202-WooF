@@ -16,8 +16,7 @@ class SecurityRuleEngine:
             return None
         
         for rule in self.rules:
-            results = rule.checkThreats(request, clientIp)
-            if results:
+            if rule.checkThreats(request, clientIp):
                 # The request is malicious, so log it and block it
                 self.log_security_break(request,rule)
                 return rule
@@ -28,8 +27,9 @@ class SecurityRuleEngine:
         attack_name = rule.split()[0] if rule else ""
         return attack_name
 
-    def log_security_break(self, request,rule):
+    def log_security_break(self, request,rule): # fix this function for if the directory doesnt exist
         # Log the security break
+        return # remove me after fix
         with open("Security\Logs\securityEvents.log", "a") as log_file:
             log_file.write(
                 "[{}] Malicious request detected from {} to {}: {} ({})\n".format(
