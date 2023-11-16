@@ -15,12 +15,20 @@ URL_IP = 'http://' + IP
 
 def getIpFromUrl(urlIn : str):        
     for url in URL_TO_IP:
-        if remove_HTTP_and_HTTPS(url).lower() == remove_HTTP_and_HTTPS(urlIn).lower():
+        if remove_scheme(url).lower() == remove_scheme(urlIn).lower():
             return URL_TO_IP[url]
     return None
         
         
-def remove_HTTP_and_HTTPS(url : str):
+def remove_scheme(url : str):
+    """removes the http/https opening from urls
+
+    Args:
+        url (str): a url to strip
+
+    Returns:
+        (str): mstripped url
+    """
     if url.lower().startswith("http://"):
         return url[7:]
     if url.lower().startswith("https://"):
