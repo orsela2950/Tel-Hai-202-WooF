@@ -28,5 +28,3 @@ class SecurityEvent:
     
     def thereIsRisk(self):
          return len(self.SecurityRisks)>0
-
-    
