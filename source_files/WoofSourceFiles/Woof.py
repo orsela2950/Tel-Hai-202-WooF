@@ -73,4 +73,4 @@ async def proxy(path: str, request: fastapi.Request):
 
 
 # Run the FastAPI app using uvicorn and specify the host and port to listen on
-run(app,host="0.0.0.0",port=8000)
+run(app,host="0.0.0.0",port=80)

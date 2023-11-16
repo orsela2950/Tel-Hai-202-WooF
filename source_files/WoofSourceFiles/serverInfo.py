@@ -7,7 +7,7 @@ URL_TO_IP = {
 
 # the servers ip and operation port
 IP = "127.0.0.1"
-PORT = 80
+PORT = 8000
 
 # dont touch-
 URL_IP = 'http://' + IP

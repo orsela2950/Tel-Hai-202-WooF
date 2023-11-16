@@ -33,4 +33,4 @@ async def root():
 
 print("-= ==WEBSERVER TESTER== =-")
 # Run the FastAPI app using uvicorn and specify the host and port to listen on
-uvicorn.run(app,port=80)
+uvicorn.run(app,port=8000)
