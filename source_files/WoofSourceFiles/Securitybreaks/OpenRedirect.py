@@ -6,7 +6,7 @@ class OpenRedirect(SecurityBreak):
     def __init__(self):
      self.name = "Open Redirect Vulnerability"
     
-    def checkThreats(request: fastapi.Request):
+    def checkThreats(self, request: fastapi.Request, clientIp : str):
         return None
     
     def getName(self):

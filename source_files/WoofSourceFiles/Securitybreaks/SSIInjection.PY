@@ -6,7 +6,7 @@ class SSIInjection(SecurityBreak):
     def __init__(self):
      self.name = "SSI Injection"
     
-    def checkThreats(request: fastapi.Request):
+    def checkThreats(self, request: fastapi.Request, clientIp : str):
         return None
     
     def getName(self):
