@@ -2,6 +2,8 @@ import datetime
 import re
 import fastapi
 import Securitybreaks.SecurityBreak as SecurityBreak
+import os
+from pathlib import Path
 
 class SecurityRuleEngine:
     def __init__(self):
@@ -24,13 +26,12 @@ class SecurityRuleEngine:
 
     def get_attack_name(self, rule):
         # Get the name of the attack
-        attack_name = rule.split()[0] if rule else ""
+        attack_name = rule.getName()
         return attack_name
 
     def log_security_break(self, request,rule): # fix this function for if the directory doesnt exist
         # Log the security break
-        return # remove me after fix
-        with open("Security\Logs\securityEvents.log", "a") as log_file:
+        with self.findFile("securityEvents.log","source_files\WoofSourceFiles\Logs") as log_file:
             log_file.write(
                 "[{}] Malicious request detected from {} to {}: {} ({})\n".format(
                     datetime.datetime.now(),
@@ -41,3 +42,13 @@ class SecurityRuleEngine:
                     re.sub(r"[<>&]", r"\&", str(request.body)),
                 )
             )
+    
+    def findFile(self,name, path):
+        filePath=""
+        for root, dirs, files in os.walk(os.getcwd()):
+            if name in files:
+                return open(os.path.join(root, name),"a")
+        return open(path+"\\"+name,"w")
+        
+        
+            

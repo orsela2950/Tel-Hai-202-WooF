@@ -1,7 +1,7 @@
 import requests
 
 # Replace with the URL of your proxy server
-proxy_server_url = "http://127.0.0.1:8000"
+proxy_server_url = "http://127.0.0.1:80"
 
 # Test payloads with different attack patterns
 test_payloads = [
