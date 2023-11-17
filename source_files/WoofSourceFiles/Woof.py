@@ -13,6 +13,7 @@ from Securitybreaks.OpenRedirect import OpenRedirect as securityRule_OpenRedirec
 from Securitybreaks.SQLInjection import SQLInjection as securityRule_SQLInjection
 from Securitybreaks.XSS import XSS as securityRule_XSS
 from Securitybreaks.XST import XST as securityRule_XST
+import Security.SecurityEvent as SecurityEvent
 
 # Create a FastAPI app instance
 app = fastapi.FastAPI()
@@ -47,9 +48,9 @@ async def proxy(path: str, request: fastapi.Request):
     #==============================
 
 
-    malicious_rule = rule_engine.is_request_malicious(request, request.client.host)
-    if malicious_rule:
-        error_response = f"Malicious request detected: {malicious_rule.getName()}"
+    malicious_event = rule_engine.is_request_malicious(request, request.client.host)
+    if malicious_event.thereIsRisk():
+        error_response = f"Malicious request detected: {malicious_event.returnRisks()}"
         print(error_response)
         return fastapi.Response(content=error_response, status_code=400)
 
