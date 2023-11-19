@@ -1,5 +1,6 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
 import fastapi
+import re
 
 
 class HostHeaderInjection(SecurityBreak):
@@ -17,32 +18,39 @@ class HostHeaderInjection(SecurityBreak):
         Returns:
             (Bool): true for threats found false for safe packet
         """        
-        does_headers_equal = self.compare_hosts(self.serverInfoModule.MAIN_URL, request.headers["host"])
+        # Define the headers to check for HHI attacks (there are several headers that can be used to set the Host header):
+        host_header_names = ['Host', 'X-Forwarded-Host', 'X-Host', 'X-Forwarded-Server', 'X-HTTP-Host-Override', 'Forwarded']
+        # Check if there are more than one host header (all kinds) in the request (HHI attack):
+        host_headers_in_request = list(set([i.lower() for i in host_header_names]).intersection(set([i.lower() for i in request.headers.keys()])))
+        if len(host_headers_in_request) > 1:
+            return True #(f"{', '.join(host_headers_in_request)}: {request.headers.getlist(host_headers_in_request[0])}")
+        
 
-        #if headers equal we need to return false for not finding threats
-        return not does_headers_equal
+        # For each header name, get all the values of the header and check them for HHI attacks
+        for curr_host_header in host_header_names:
+            
+            # Get the host header values as a list:
+            host_headers_values = request.headers.getlist(curr_host_header)
+            
+            # If there are more than one header value, it means that the header was set more than once (HHI attack):
+            if len(host_headers_values) > 1:
+                return True #f"{curr_host_header}: {host_headers_values}"
+            
+            # If no header in the "curr_host_header" was found, continue to the next header name:
+            if len(host_headers_values) != 0:
+                host_header_to_check = host_headers_values[0]  # Get the header value to check for HHI attacks
+                
+                # Check if the header value contains any illegal characters or patterns that might indicate an HHI attack (like '\n'):
+                if not re.match(r'^[a-zA-Z0-9.\-:%]+\Z', host_header_to_check):
+                    return True #f"{curr_host_header}: {host_header_to_check}"
+            
+        # If passed all the checks, return False (not HHI):
+        return False #None
 
     
     def getName(self):
         return self.name
     
-    def compare_hosts(self, saved_host : str, requested_host: str):
-        """compairs 2 hosts after stripping
+    
 
-        Args:
-            saved_host (str): saved in server info
-            requested_host (str): requested by client
-
-        Returns:
-            (Bool): true for headers equal and false for not equal
-        """
-        # Normalize saved host by removing port number and scheme
-        normalized_saved_host = self.serverInfoModule.remove_scheme(saved_host).split(':')[0]
-
-        # Normalize requested host by removing port number and scheme
-        normalized_requested_host = self.serverInfoModule.remove_scheme(requested_host).split(':')[0]
-
-        # Compare normalized hosts
-        if normalized_saved_host.lower() == normalized_requested_host.lower():
-            return True
-        return False
+    
