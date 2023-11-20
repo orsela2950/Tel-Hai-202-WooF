@@ -43,14 +43,43 @@ class HostHeaderInjection(SecurityBreak):
                 # Check if the header value contains any illegal characters or patterns that might indicate an HHI attack (like '\n'):
                 if not re.match(r'^[a-zA-Z0-9.\-:%]+\Z', host_header_to_check):
                     return True #f"{curr_host_header}: {host_header_to_check}"
+                
+                #check if the server contains the requested host
+                isHostMatches = False
+                for server_host in self.serverInfoModule.URL_TO_IP:
+                    if self.compare_hosts(server_host, host_header_to_check):
+                        print("hi there")
+                        isHostMatches = True
+                if not isHostMatches:
+                    return True
             
         # If passed all the checks, return False (not HHI):
         return False #None
 
-    
     def getName(self):
         return self.name
     
-    
+
+    def compare_hosts(self, saved_host : str, requested_host: str):
+        """compairs 2 hosts after stripping
+
+        Args:
+            saved_host (str): saved in server info
+            requested_host (str): requested by client
+
+        Returns:
+            (Bool): true for headers equal and false for not equal
+        """
+        # Normalize saved host by removing port number and scheme
+        normalized_saved_host = self.serverInfoModule.remove_scheme(saved_host).split(':')[0]
+
+        # Normalize requested host by removing port number and scheme
+        normalized_requested_host = self.serverInfoModule.remove_scheme(requested_host).split(':')[0]
+
+        # Compare normalized hosts
+        if normalized_saved_host.lower() == normalized_requested_host.lower():
+            return True
+        return False
+
 
     
