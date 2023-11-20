@@ -63,7 +63,7 @@ async def proxy(path: str, request: fastapi.Request):
         modified_headers[pair[0].decode()] = pair[1].decode()
     # add the x forward header
     modified_headers["X-Forwarded-For"] = request.client.host
-    modified_headers["host"] = serverInfo.MAIN_URL
+    modified_headers["host"] = destination
 
     # Forward the incoming request to the original destination and get the response
     client = httpx.Client()
