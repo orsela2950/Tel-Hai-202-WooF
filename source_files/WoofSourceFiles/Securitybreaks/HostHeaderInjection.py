@@ -7,6 +7,7 @@ class HostHeaderInjection(SecurityBreak):
     def __init__(self, serverInfoModuleIn):
         self.name = "HTTP Host Header Injection"
         self.serverInfoModule = serverInfoModuleIn
+        self.debugPrints = False
         
     def checkThreats(self, request: fastapi.Request, clientIp : str):
         """gets a request and checks if it got the host header injection in it
@@ -23,9 +24,11 @@ class HostHeaderInjection(SecurityBreak):
         # Check if there are more than one host header (all kinds) in the request (HHI attack):
         host_headers_in_request = list(set([i.lower() for i in host_header_names]).intersection(set([i.lower() for i in request.headers.keys()])))
         if len(host_headers_in_request) > 1:
+            self.debugPrint('blocked more than one host header')
             return True #(f"{', '.join(host_headers_in_request)}: {request.headers.getlist(host_headers_in_request[0])}")
         
-
+        
+        
         # For each header name, get all the values of the header and check them for HHI attacks
         for curr_host_header in host_header_names:
             
@@ -34,6 +37,7 @@ class HostHeaderInjection(SecurityBreak):
             
             # If there are more than one header value, it means that the header was set more than once (HHI attack):
             if len(host_headers_values) > 1:
+                self.debugPrint('blocked more than one host in host header')
                 return True #f"{curr_host_header}: {host_headers_values}"
             
             # If no header in the "curr_host_header" was found, continue to the next header name:
@@ -41,16 +45,17 @@ class HostHeaderInjection(SecurityBreak):
                 host_header_to_check = host_headers_values[0]  # Get the header value to check for HHI attacks
                 
                 # Check if the header value contains any illegal characters or patterns that might indicate an HHI attack (like '\n'):
-                if not re.match(r'^[a-zA-Z0-9.\-:%]+\Z', host_header_to_check):
+                if not re.match(r'^[a-zA-Z0-9.\-:%]+\Z', self.serverInfoModule.remove_scheme(host_header_to_check)):
+                    self.debugPrint('blocked because of escape chars and illegal chars ' + str(self.serverInfoModule.remove_scheme(host_header_to_check)))
                     return True #f"{curr_host_header}: {host_header_to_check}"
                 
                 #check if the server contains the requested host
                 isHostMatches = False
                 for server_host in self.serverInfoModule.URL_TO_IP:
                     if self.compare_hosts(server_host, host_header_to_check):
-                        print("hi there")
                         isHostMatches = True
                 if not isHostMatches:
+                    self.debugPrint('blocked because hosts didnt matched')
                     return True
             
         # If passed all the checks, return False (not HHI):
@@ -80,6 +85,8 @@ class HostHeaderInjection(SecurityBreak):
         if normalized_saved_host.lower() == normalized_requested_host.lower():
             return True
         return False
-
-
+    
+    def debugPrint(self, text : str):
+        if self.debugPrint:
+            print('[HHI] ' + text)
     
