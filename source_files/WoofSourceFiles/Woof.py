@@ -35,7 +35,7 @@ rule_engine.add_rule(securityRule_XST())
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
 async def proxy(path: str, request: fastapi.Request):
     # Get the original destination from the request headers
-    destination = request.headers.get("Host")
+    destination = serverInfo.remove_scheme(request.headers.get("Host"))
     # Construct the full URL of the original destination
     url = f"http://{destination}/{path}"
     ipead_url = f"http://{serverInfo.IP}:{serverInfo.PORT}/{path}"
