@@ -18,9 +18,11 @@ class SecurityRuleEngine:
         event = SecurityEvent(request)
         
         for rule in self.rules:
-            if rule.checkThreats(request, clientIp):
+            check= rule.checkThreats(request, clientIp)
+            if check[0]:
                 # The request is malicious, so log it and block it
                 event.addBreak(rule)
+                print(rule.getName(),check[1])
         if event.thereIsRisk(): self.log_security_break(event)        
         return event
     def get_attack_name(self, rule):

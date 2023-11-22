@@ -25,7 +25,7 @@ class HostHeaderInjection(SecurityBreak):
         host_headers_in_request = list(set([i.lower() for i in host_header_names]).intersection(set([i.lower() for i in request.headers.keys()])))
         if len(host_headers_in_request) > 1:
             self.debugPrint('blocked more than one host header')
-            return True #(f"{', '.join(host_headers_in_request)}: {request.headers.getlist(host_headers_in_request[0])}")
+            return True,(f"{', '.join(host_headers_in_request)}: {request.headers.getlist(host_headers_in_request[0])}")
         
         
         
@@ -38,7 +38,7 @@ class HostHeaderInjection(SecurityBreak):
             # If there are more than one header value, it means that the header was set more than once (HHI attack):
             if len(host_headers_values) > 1:
                 self.debugPrint('blocked more than one host in host header')
-                return True #f"{curr_host_header}: {host_headers_values}"
+                return True ,f"{curr_host_header}: {host_headers_values}"
             
             # If no header in the "curr_host_header" was found, continue to the next header name:
             if len(host_headers_values) != 0:
@@ -47,7 +47,7 @@ class HostHeaderInjection(SecurityBreak):
                 # Check if the header value contains any illegal characters or patterns that might indicate an HHI attack (like '\n'):
                 if not re.match(r'^[a-zA-Z0-9.\-:%]+\Z', self.serverInfoModule.remove_scheme(host_header_to_check)):
                     self.debugPrint('blocked because of escape chars and illegal chars ' + str(self.serverInfoModule.remove_scheme(host_header_to_check)))
-                    return True #f"{curr_host_header}: {host_header_to_check}"
+                    return True ,f"{curr_host_header}: {host_header_to_check}"
                 
                 #check if the server contains the requested host
                 isHostMatches = False
@@ -56,10 +56,11 @@ class HostHeaderInjection(SecurityBreak):
                         isHostMatches = True
                 if not isHostMatches:
                     self.debugPrint('blocked because hosts didnt matched')
-                    return True
+                    return True,f"{self.serverInfoModule.URL_TO_IP}:{host_header_to_check}"
+                    
             
         # If passed all the checks, return False (not HHI):
-        return False #None
+        return False ,None
 
     def getName(self):
         return self.name
