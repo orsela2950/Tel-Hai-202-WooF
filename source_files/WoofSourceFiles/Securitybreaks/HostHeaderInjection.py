@@ -58,7 +58,7 @@ class HostHeaderInjection(SecurityBreak):
                     
             
         # If passed all the checks, return False (not HHI):
-        return False ,None
+        return False , 'all good (;'
 
     def getName(self):
         return self.name
