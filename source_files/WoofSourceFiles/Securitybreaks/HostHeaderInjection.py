@@ -18,7 +18,7 @@ class HostHeaderInjection(SecurityBreak):
 
         Returns:
             (Bool): true for threats found false for safe packet
-        """        
+        """
         # Define the headers to check for HHI attacks (there are several headers that can be used to set the Host header):
         host_header_names = ['Host', 'X-Forwarded-Host', 'X-Host', 'X-Forwarded-Server', 'X-HTTP-Host-Override', 'Forwarded']
         # Check if there are more than one host header (all kinds) in the request (HHI attack):
@@ -26,8 +26,6 @@ class HostHeaderInjection(SecurityBreak):
         if len(host_headers_in_request) > 1:
             self.debugPrint('blocked more than one host header')
             return True #(f"{', '.join(host_headers_in_request)}: {request.headers.getlist(host_headers_in_request[0])}")
-        
-        
         
         # For each header name, get all the values of the header and check them for HHI attacks
         for curr_host_header in host_header_names:
@@ -63,7 +61,6 @@ class HostHeaderInjection(SecurityBreak):
 
     def getName(self):
         return self.name
-    
 
     def compare_hosts(self, saved_host : str, requested_host: str):
         """compairs 2 hosts after stripping
@@ -88,5 +85,5 @@ class HostHeaderInjection(SecurityBreak):
     
     def debugPrint(self, text : str):
         if self.debugPrint:
-            print('[HHI] ' + text)
+            print('[HHI debug] ' + text)
     
