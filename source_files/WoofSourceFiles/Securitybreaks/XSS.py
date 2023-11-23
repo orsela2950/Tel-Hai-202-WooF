@@ -10,9 +10,28 @@ class XSS(SecurityBreak):
         self.debugPrints = False
     
     def checkThreats(self, request: fastapi.Request, clientIp : str):
-        return None
+        """Check if the request contains XSS
+
+        Args:
+            request (fastapi.Request): the request to check (as recieved from client)
+            clientIp (str): the ip of this request sender
+
+        Returns:
+            (Bool): true for threats found false for safe packet
+        """
+        
+        #check the content type for not allowed content types
+        if request.headers['Content-Type'].lower() in blocked_content_types:
+            self.debugPrint('Content type is not allowed: ' + str(request.headers['Content-Type']))
+            return True
+        
+        #check the data for xss
+         
+        
+        return False,None
     
     def getName(self):
+        return self.name
     
     def debugPrint(self, text : str):
         if self.debugPrint:
