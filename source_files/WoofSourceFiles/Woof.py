@@ -9,7 +9,7 @@ from SecurityRuleEngine import SecurityRuleEngine
 #import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
 from Securitybreaks.HPP import HPP as securityRule_HPP
-from Securitybreaks.SSIInjection import SSIInjection as securityRule_SSIInjection
+from Securitybreaks.SSIinjection import SSIinjection as securityRule_SSIinjection
 from Securitybreaks.OpenRedirect import OpenRedirect as securityRule_OpenRedirect
 from Securitybreaks.SQLInjection import SQLInjection as securityRule_SQLInjection
 from Securitybreaks.XSS import XSS as securityRule_XSS
@@ -25,7 +25,7 @@ rule_engine = SecurityRuleEngine()
 # Add rules to the SecurityRuleEngine instance
 rule_engine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
 rule_engine.add_rule(securityRule_HPP())
-rule_engine.add_rule(securityRule_SSIInjection())
+rule_engine.add_rule(securityRule_SSIinjection())
 rule_engine.add_rule(securityRule_OpenRedirect())
 rule_engine.add_rule(securityRule_SQLInjection())
 rule_engine.add_rule(securityRule_XSS())

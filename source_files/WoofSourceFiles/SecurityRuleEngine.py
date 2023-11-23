@@ -19,7 +19,7 @@ class SecurityRuleEngine:
         
         for rule in self.rules:
             check= rule.checkThreats(request, clientIp)
-            if check[0]:
+            if check[0] :
                 # The request is malicious, so log it and block it
                 event.addBreak(rule)
                 print(rule.getName(),check[1])

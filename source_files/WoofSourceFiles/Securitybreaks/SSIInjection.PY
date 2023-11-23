@@ -3,7 +3,7 @@ import re
 import fastapi
 from fastapi import Query
 
-class SSIInjection(SecurityBreak):
+class SSIinjection(SecurityBreak):
     def __init__(self):
      self.name = "SSI Injection"
     
