@@ -20,10 +20,10 @@ class SSIInjection(SecurityBreak):
         """
         request_data=request.query_params
         for param_name, param_value in request_data.items():
-            if is_text_ssii(param_value):
-                return True #param_value
+            if self.is_text_ssii(param_value):
+                return True ,param_value
         
-        return False #None
+        return False ,None
     
     def getName(self):
         return self.name

@@ -31,10 +31,10 @@ class HPP(SecurityBreak):
         # Check if any parameter has more than one value:
         for param_name, param_values in params_dict.items():
             if len(param_values) > 1:
-                return True #f"{param_name}={param_values}"
+                return True ,f"{param_name}={param_values}"
 
                 
-        return False #None
+        return False ,None
     
     def getName(self):
         return self.name
