@@ -18,7 +18,7 @@ class XST(SecurityBreak):
             (Bool): true for threats found false for safe packet
 
         """
-        return request.method == "TRACE" , f"{request.method} : {request.path}"
+        return request.method == "TRACE" , f"{request.method} : {request.url}"
     
     def getName(self):
         return self.name
