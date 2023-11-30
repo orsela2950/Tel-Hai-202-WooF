@@ -65,9 +65,21 @@ async def proxy(path: str, request: fastapi.Request):
     modified_headers["X-Forwarded-For"] = request.client.host
     modified_headers["host"] = destination
 
-    # Forward the incoming request to the original destination and get the response
-    client = httpx.Client()
-    response = client.get(ipead_url, headers=modified_headers)
+    try:
+        # Forward the incoming request to the original destination and get the response
+        client = httpx.Client()
+        response = client.get(ipead_url, headers=modified_headers)
+
+    except httpx.HTTPError as http_err:
+        # Handle HTTP errors (e.g., 4xx or 5xx responses)
+        print(f"HTTP error occurred: {http_err}")
+        return fastapi.Response(content=f"HTTP error occurred: {http_err}", status_code=400)
+
+    except Exception as e:
+        # Handle other exceptions
+        print(f"An unexpected error occurred: {e}")
+        return fastapi.Response(content=f"An unexpected error occurred: {e}", status_code=400)
+
 
     # Check the size and complexity of the response object
     if len(response.content) > 1024 * 1024:
