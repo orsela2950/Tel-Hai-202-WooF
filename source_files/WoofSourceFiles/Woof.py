@@ -73,12 +73,12 @@ async def proxy(path: str, request: fastapi.Request):
     except httpx.HTTPError as http_err:
         # Handle HTTP errors (e.g., 4xx or 5xx responses)
         print(f"HTTP error occurred: {http_err}")
-        return fastapi.Response(content=f"HTTP error occurred: {http_err}", status_code=400)
+        return fastapi.Response(content=f"HTTP error occurred: {http_err}", status_code=500)
 
     except Exception as e:
         # Handle other exceptions
         print(f"An unexpected error occurred: {e}")
-        return fastapi.Response(content=f"An unexpected error occurred: {e}", status_code=400)
+        return fastapi.Response(content=f"An unexpected error occurred: {e}", status_code=500)
 
 
     # Check the size and complexity of the response object
