@@ -9,7 +9,7 @@ from SecurityRuleEngine import SecurityRuleEngine
 #import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
 from Securitybreaks.HPP import HPP as securityRule_HPP
-from Securitybreaks.SSIinjection import SSIinjection as securityRule_SSIinjection
+from Securitybreaks.SSIInjection import SSIinjection as securityRule_SSIinjection
 from Securitybreaks.OpenRedirect import OpenRedirect as securityRule_OpenRedirect
 from Securitybreaks.SQLInjection import SQLInjection as securityRule_SQLInjection
 from Securitybreaks.XSS import XSS as securityRule_XSS
@@ -56,7 +56,6 @@ async def proxy(path: str, request: fastapi.Request):
         print(error_response)
         return fastapi.Response(content=error_response, status_code=400)
 
-
 #ok VV
     modified_headers = {}
     for pair in request.headers.raw:
@@ -68,8 +67,13 @@ async def proxy(path: str, request: fastapi.Request):
     try:
         # Forward the incoming request to the original destination and get the response
         client = httpx.Client()
-        response = client.get(ipead_url, headers=modified_headers)
-
+        if request.method == 'GET':
+            response = client.get(ipead_url, headers=modified_headers, params=request.query_params)
+        elif request.method == 'POST':
+            response = client.post(ipead_url, headers=modified_headers, data= await request.body())
+        else:
+            return fastapi.Response(content="NEW HTTP METHOD, We Support only post and get at the time", status_code=500)
+        
     except httpx.HTTPError as http_err:
         # Handle HTTP errors (e.g., 4xx or 5xx responses)
         print(f"HTTP error occurred: {http_err}")
