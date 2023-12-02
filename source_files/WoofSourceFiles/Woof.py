@@ -1,6 +1,6 @@
 import datetime
 import fastapi
-import httpx
+import aiohttp
 import os
 import serverInfo
 from uvicorn import run
@@ -39,16 +39,13 @@ async def proxy(path: str, request: fastapi.Request):
     # Construct the full URL of the original destination
     url = f"http://{destination}/{path}"
     ipead_url = f"http://{serverInfo.IP}:{serverInfo.PORT}/{path}"
-
-
     # Log the request
     print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
+    
     
     with rule_engine.findFile("waf.log", "source_files/WoofSourceFiles/Logs") as log_file:
         # Log the request
         log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.datetime.now(), request.client.host,request.client.port,url,ipead_url))
-    #==============================
-
 
     malicious_event = rule_engine.is_request_malicious(request, request.client.host)
     if malicious_event.thereIsRisk():
@@ -56,41 +53,49 @@ async def proxy(path: str, request: fastapi.Request):
         print(error_response)
         return fastapi.Response(content=error_response, status_code=400)
 
-#ok VV
-    modified_headers = {}
-    for pair in request.headers.raw:
-        modified_headers[pair[0].decode()] = pair[1].decode()
-    # add the x forward header
-    modified_headers["X-Forwarded-For"] = request.client.host
-    modified_headers["host"] = destination
-
     try:
-        # Forward the incoming request to the original destination and get the response
-        client = httpx.Client()
-        if request.method == 'GET':
-            response = client.get(ipead_url, headers=modified_headers, params=request.query_params)
-        elif request.method == 'POST':
-            response = client.post(ipead_url, headers=modified_headers, data= await request.body())
-        else:
-            return fastapi.Response(content="NEW HTTP METHOD, We Support only post and get at the time", status_code=500)
-        
-    except httpx.HTTPError as http_err:
-        # Handle HTTP errors (e.g., 4xx or 5xx responses)
-        print(f"HTTP error occurred: {http_err}")
-        return fastapi.Response(content=f"HTTP error occurred: {http_err}", status_code=500)
+        # Extract the target URL from the path
+        target_url = serverInfo.URL_IP + ':' + str(serverInfo.PORT) + path
 
+        # Create an async HTTP client session
+        async with aiohttp.ClientSession() as session:
+            # Construct the request object using the FastAPI `Request` object
+            request_kwargs = {
+                "method": request.method,
+                "url": target_url,
+                "headers": dict(request.headers),  # Convert `Headers` object to dictionary
+            }
+            # add the X-Forwarded-For header
+            request_kwargs["headers"]["X-Forwarded-For"] = request.client.host
+
+            # If there is a body, pass it as a positional argument after the URL
+            if request.body:
+                request_kwargs = request_kwargs | {"data": await request.body()}
+
+            # Send the request to the target server
+            async with session.request(**request_kwargs) as target_response:
+                # Copy the response status code
+                status_code = target_response.status
+
+                # Copy the response headers
+                headers = {}
+                for name, value in target_response.headers.items():
+                    headers[name] = value
+
+                # Copy the response body
+                body = await target_response.read()
+
+                # Construct the FastAPI response
+                return fastapi.Response(
+                    status_code=status_code,
+                    headers=headers,
+                    content=body,
+                )
+                
     except Exception as e:
         # Handle other exceptions
         print(f"An unexpected error occurred: {e}")
         return fastapi.Response(content=f"An unexpected error occurred: {e}", status_code=500)
-
-
-    # Check the size and complexity of the response object
-    if len(response.content) > 1024 * 1024:
-        # The response object is too large
-        raise Exception("Response object is too large")
-
-    return fastapi.Response(content=response.content, headers=response.headers, status_code=response.status_code)
 
 # Run the FastAPI app using uvicorn and specify the host and port to listen on
 if __name__ == "__main__":
