@@ -15,14 +15,14 @@ class XSS(SecurityBreak):
         self.debugPrints = False
     
     def checkThreats(self, request: fastapi.Request, clientIp : str):
-        """Check if the request contains XSS
+        """Check if the request contains XSS Attack
 
         Args:
             request (fastapi.Request): the request to check (as recieved from client)
             clientIp (str): the ip of this request sender
 
         Returns:
-            (Bool): true for threats found false for safe packet
+            (Bool, str): true for threats found false for safe packet, a summary of the found attack if found or none
         """
         
         #check the content type for not allowed content types
