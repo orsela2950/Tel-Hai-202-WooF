@@ -9,7 +9,7 @@ from SecurityRuleEngine import SecurityRuleEngine
 #import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
 from Securitybreaks.HPP import HPP as securityRule_HPP
-from Securitybreaks.SSIInjection import SSIinjection as securityRule_SSIinjection
+from Securitybreaks.SSIinjection import SSIinjection as securityRule_SSIinjection
 from Securitybreaks.OpenRedirect import OpenRedirect as securityRule_OpenRedirect
 from Securitybreaks.SQLInjection import SQLInjection as securityRule_SQLInjection
 from Securitybreaks.XSS import XSS as securityRule_XSS
