@@ -34,6 +34,7 @@ class SecurityRuleEngine:
         # Log the security break
         with self.findFile("securityEvents.log","source_files\WoofSourceFiles\Logs") as log_file:
             log_file.write(event.printEventDescription())
+            log_file.close()
     
     def findFile(self,name, path):
         filePath=""

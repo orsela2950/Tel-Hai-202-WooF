@@ -18,7 +18,7 @@ class SQLInjection(SecurityBreak):
             (Bool): true for threats found false for safe packet
         """
 
-        regex = r"(?:^|\s+)(?:SELECT|UPDATE|DELETE|INSERT\s+INTO|CREATE\s+(?:DATABASE|TABLE|INDEX|VIEW)|ALTER\s+(?:DATABASE|TABLE)|DROP\s+(?:TABLE|INDEX)|WHERE|FROM|JOIN|ON|AS|GROUP\s+BY|HAVING|ORDER\s+BY|LIMIT|OFFSET)(?:\s+|$)"
+        regex = r"(?i)\b(?:SELECT|UPDATE|DELETE|INSERT\s+INTO|CREATE\s+(?:DATABASE|TABLE|INDEX|VIEW)|ALTER\s+(?:DATABASE|TABLE)|DROP\s+(?:TABLE|INDEX)|WHERE|FROM|JOIN|ON|AS|GROUP\s+BY|HAVING|ORDER\s+BY|LIMIT|OFFSET)\b"
         
 
         for param_name, param_value in request.query_params.items():

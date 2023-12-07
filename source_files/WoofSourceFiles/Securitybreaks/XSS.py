@@ -6,9 +6,9 @@ blocked_keyword_list = []
 blocked_content_types = ['text/html', 'application/javascript', 'application/x-shockwave-flash', 'application/xml','application/x-www-form-urlencoded']
 
 #load the word list:
-with open('source_files\WoofSourceFiles\Securitybreaks\\XSS_Malicious.txt', 'r') as f:
+with open('source_files\\WoofSourceFiles\\Securitybreaks\\XSS_Malicious.txt', 'r') as f:
     blocked_keyword_list = f.readlines()
-
+    f.close()
 class XSS(SecurityBreak):
     def __init__(self):
         self.name = "Cross Site Scripting (XSS)"

@@ -46,6 +46,7 @@ async def proxy(path: str, request: fastapi.Request):
     with rule_engine.findFile("waf.log", "source_files/WoofSourceFiles/Logs") as log_file:
         # Log the request
         log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.datetime.now(), request.client.host,request.client.port,url,ipead_url))
+        log_file.close()
 
     malicious_event = rule_engine.is_request_malicious(request, request.client.host)
     if malicious_event.thereIsRisk():
