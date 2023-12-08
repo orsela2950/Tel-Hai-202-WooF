@@ -1,9 +1,10 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
 import datetime
 import re
+import fastapi
 
 class SecurityEvent:
-    def __init__(self, request):
+    def __init__(self, request : fastapi.Request):
         self.ip = request.client.host
         self.request = request
         self.currentTime = datetime.datetime.now()
@@ -28,5 +29,7 @@ class SecurityEvent:
     
     def thereIsRisk(self):
          return len(self.SecurityRisks)>0
-
+    
+    def returnRisks(self):
+         return [risk.getName() for risk in self.SecurityRisks]
     

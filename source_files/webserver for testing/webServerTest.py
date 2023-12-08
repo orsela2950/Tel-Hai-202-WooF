@@ -18,7 +18,7 @@ async def get_favicon_path():
 
 @app.get("/")
 async def root(request: Request):
-    return "requested host " + request.headers.get("Host")
+    return "GET requested host " + request.headers.get("Host")
 
 @app.get("/favicon.ico")
 async def root():
@@ -28,9 +28,12 @@ async def root():
     print("[!] cant find favicon")
     return None
 
+@app.post("/")
+async def root(request: Request):
+    return "POST request |" + (await request.body()).decode()
 
 
 
 print("-= ==WEBSERVER TESTER== =-")
 # Run the FastAPI app using uvicorn and specify the host and port to listen on
-uvicorn.run(app,port=80)
+uvicorn.run(app,port=8000)
