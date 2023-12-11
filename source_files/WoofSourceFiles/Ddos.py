@@ -7,15 +7,26 @@ import json
 class Ddos():
     def __init__(self):
         self._size = 10
-        self._timeout = 5
+        self._timeout = 5 #sec before request delete from queue
         
-        self._lock = threading.Lock()
+        self._lock = threading.Lock() #lock for keep the shared varibles safe
         self._packetsQueue = Queue(maxsize = self._size)
         self._timers = {}
 
     async def packet_into_stuck(self, request: fastapi.Request):
+        """Get request and check if the request is part of Ddos attack
+
+        Args:
+            request (fastapi.Request): the request to check (as recieved from client)
+
+        Returns:
+            (Bool,String): true if there is a Ddos attack,false if isn't. string for info about the attack
+        """
+
+        
+        
         with self._lock:
-            if not self._packetsQueue.empty():
+            if not self._packetsQueue.empty(): #check if queue is empty
                 # Convert the queue to a list
                 list_queue = list(self._packetsQueue.queue)
                 
@@ -30,13 +41,13 @@ class Ddos():
                     except Exception as e:
                         print(f"Error processing packet: {str(e)}")
             
-            
+            #if queue is full pop the first in queue, first in first out
             if self._packetsQueue.full():
                 self._packetsQueue.get()
             
             self._packetsQueue.put(request)
 
-            # Set a timer for other packets with a delay of 2 seconds
+            # Set a timer for other packets with a delay of "self._timeout" seconds
             timer = threading.Timer(self._timeout, self.handle_packet_lifetime, args=(request,))
             self._timers[request] = timer
             timer.start()
@@ -56,12 +67,12 @@ class Ddos():
                 timer.cancel()
                 
     async def compare_payloads(self,request_body1, request_body2):
-        # Assuming payload1 and payload2 are coroutines
+
         try:
             body1 = await request_body1
             body2 = await request_body2
         except Exception as e:
-            # Handle the exception appropriately
+            # Handle the exception
             return f"Error getting JSON: {str(e)}"
 
         # Convert dictionaries to JSON strings

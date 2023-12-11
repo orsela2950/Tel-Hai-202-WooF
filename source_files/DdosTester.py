@@ -10,6 +10,7 @@ def send_request(payload):
 for i in range(10):
     payload = {"key": "value"}
     send_request(payload)
+    time.sleep(0.1)
     
 
 
