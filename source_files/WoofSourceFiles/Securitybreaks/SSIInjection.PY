@@ -3,11 +3,11 @@ import re
 import fastapi
 from fastapi import Query
 
-class SSIinjection(SecurityBreak):
+class SSIInjection(SecurityBreak):
     def __init__(self):
      self.name = "SSI Injection"
     
-    def checkThreats(self, request: fastapi.Request, clientIp : str):
+    async def checkThreats(self, request: fastapi.Request, clientIp : str):
         """Function to check if a request contains SSIi (Server-Side Includes Injection) characters.
 
         Args:

@@ -11,7 +11,7 @@ from Ddos import Ddos
 #import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
 from Securitybreaks.HPP import HPP as securityRule_HPP
-from Securitybreaks.SSIinjection import SSIinjection as securityRule_SSIinjection
+from Securitybreaks.SSIInjection import SSIInjection as securityRule_SSIInjection
 from Securitybreaks.OpenRedirect import OpenRedirect as securityRule_OpenRedirect
 from Securitybreaks.SQLInjection import SQLInjection as securityRule_SQLInjection
 from Securitybreaks.XSS import XSS as securityRule_XSS
@@ -29,7 +29,7 @@ ddos = Ddos()
 # Add rules to the SecurityRuleEngine instance
 rule_engine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
 rule_engine.add_rule(securityRule_HPP())
-rule_engine.add_rule(securityRule_SSIinjection())
+rule_engine.add_rule(securityRule_SSIInjection())
 rule_engine.add_rule(securityRule_OpenRedirect())
 rule_engine.add_rule(securityRule_SQLInjection())
 rule_engine.add_rule(securityRule_XSS())
@@ -59,7 +59,7 @@ async def proxy(path: str, request: fastapi.Request):
         return fastapi.Response(content=error_response, status_code=400)
     
     
-    malicious_event = rule_engine.is_request_malicious(request, request.client.host)
+    malicious_event = await rule_engine.is_request_malicious(request, request.client.host)
     if malicious_event.thereIsRisk():
         error_response = f"Malicious request detected: {malicious_event.returnRisks()}"
         print(error_response)
