@@ -8,7 +8,7 @@ from uvicorn import run
 from SecurityRuleEngine import SecurityRuleEngine
 from Ddos import Ddos
 
-#import the security breaks
+# import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
 from Securitybreaks.HPP import HPP as securityRule_HPP
 from Securitybreaks.SSIInjection import SSIInjection as securityRule_SSIInjection
@@ -35,30 +35,30 @@ rule_engine.add_rule(securityRule_SQLInjection())
 rule_engine.add_rule(securityRule_XSS())
 rule_engine.add_rule(securityRule_XST())
 
+
 # Define a route that can handle any HTTP method and any path
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
 async def proxy(path: str, request: fastapi.Request):
-    # Get the original destination from the request headers
-    destination = serverInfo.remove_scheme(request.headers.get("Host"))
-    # Construct the full URL of the original destination
-    url = f"http://{destination}/{path}"
-    ipead_url = f"http://{serverInfo.IP}:{serverInfo.PORT}/{path}"
+    # Get the original destination(host) from the request headers
+    host = serverInfo.remove_scheme(request.headers.get("Host"))
+    # Construct the full URL of the original destination(host)
+    url = f"http://{host}/{path}"
+    ipead_url = f"http://{serverInfo.get_server_ip()}:{serverInfo.get_server_port()}/{path}"
     # Log the request
     print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
-    
-    
+
     with rule_engine.findFile("waf.log", "source_files/WoofSourceFiles/Logs") as log_file:
         # Log the request
-        log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.datetime.now(), request.client.host,request.client.port,url,ipead_url))
+        log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.datetime.now(), request.client.host,
+                                                                          request.client.port, url, ipead_url))
         log_file.close()
 
-    diff_ddos=await ddos.packet_into_stuck(request)
+    diff_ddos = await ddos.packet_into_stuck(request)
     if diff_ddos[0]:
         error_response = f"Ddos attack deteced, {diff_ddos[1]}"
         print(error_response)
         return fastapi.Response(content=error_response, status_code=400)
-    
-    
+
     malicious_event = await rule_engine.is_request_malicious(request, request.client.host)
     if malicious_event.thereIsRisk():
         error_response = f"Malicious request detected: {malicious_event.returnRisks()}"
@@ -67,7 +67,7 @@ async def proxy(path: str, request: fastapi.Request):
 
     try:
         # Extract the target URL from the path
-        target_url = serverInfo.URL_IP + ':' + str(serverInfo.PORT) + path
+        target_url = serverInfo.get_server_ipead_url() + ':' + str(serverInfo.get_server_port()) + '/' + path
 
         # Create an async HTTP client session
         async with aiohttp.ClientSession() as session:
@@ -103,12 +103,12 @@ async def proxy(path: str, request: fastapi.Request):
                     headers=headers,
                     content=body,
                 )
-                
+
     except Exception as e:
         # Handle other exceptions
         print(f"An unexpected error occurred: {e}")
-        return fastapi.Response(content=f"An unexpected error occurred: {e}", status_code=500)
+        return fastapi.Response(content=f"An unexpected error occurred: {e.args}", status_code=500)
 
-# Run the FastAPI app using uvicorn and specify the host and port to listen on
 if __name__ == "__main__":
-    run(app, host="0.0.0.0", port=80)#, ssl=ssl_context)
+    # Run the FastAPI app using uvicorn and specify the host and port to listen on
+    run(app, host="0.0.0.0", port=80)  # , ssl=ssl_context)
