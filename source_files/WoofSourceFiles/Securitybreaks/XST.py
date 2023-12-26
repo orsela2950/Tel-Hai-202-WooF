@@ -6,7 +6,7 @@ class XST(SecurityBreak):
     def __init__(self):
      self.name = "Cross Site Tracing (XST)"
     
-    def checkThreats(self, request: fastapi.Request, clientIp : str):
+    async def checkThreats(self, request: fastapi.Request, clientIp : str):
         """Function check if HTTP request contains Cross Site Tracing (XST) attack,
         by checking if the request method is TRACE.
 

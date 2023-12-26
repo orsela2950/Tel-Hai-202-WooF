@@ -6,7 +6,7 @@ blocked_keyword_list = []
 blocked_content_types = ['text/html', 'application/javascript', 'application/x-shockwave-flash', 'application/xml','application/x-www-form-urlencoded']
 
 #load the word list:
-with open('source_files\\WoofSourceFiles\\Securitybreaks\\XSS_Malicious.txt', 'r') as f:
+with open('Securitybreaks\XSS_Malicious.txt', 'r') as f:
     blocked_keyword_list = f.readlines()
     f.close()
 class XSS(SecurityBreak):
@@ -14,7 +14,7 @@ class XSS(SecurityBreak):
         self.name = "Cross Site Scripting (XSS)"
         self.debugPrints = False
     
-    def checkThreats(self, request: fastapi.Request, clientIp : str):
+    async def checkThreats(self, request: fastapi.Request, clientIp : str):
         """Check if the request contains XSS Attack
 
         Args:

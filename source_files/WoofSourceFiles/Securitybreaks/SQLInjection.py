@@ -1,13 +1,12 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
 import fastapi
 import re
-
-
+import  threading
 class SQLInjection(SecurityBreak):
     def __init__(self):
      self.name = "SQL Injection"
     
-    def checkThreats(self, request: fastapi.Request, clientIp : str):
+    async def checkThreats(self, request: fastapi.Request, clientIp : str):
         """Check if the request contains SQL Injection
 
         Args:
@@ -25,7 +24,7 @@ class SQLInjection(SecurityBreak):
             matchBody = re.search(regex, param_value)
             if matchBody:
                 full_query = matchBody.group()
-                self.debugPrint(f"A sql statement was detected in the request:{full_query}")
+                self.debugPrint(f"A sql statement was detected in the request params:{full_query}")
                 return (True, full_query)
             
 
@@ -33,10 +32,18 @@ class SQLInjection(SecurityBreak):
             matchHeader = re.search(regex, value)
             if matchHeader:
                 full_query = matchHeader.group()
-                self.debugPrint(f"A sql statement was detected in the request:{full_query}")
+                self.debugPrint(f"A sql statement was detected in the request headers:{full_query}")
                 return True,full_query
-        
-        
+
+
+        body = await request.body()
+        if body:
+            matchHeader = re.search(regex, str(body))
+            if matchHeader:
+                full_query = matchHeader.group()
+                self.debugPrint(f"A sql statement was detected in the request body:{full_query}")
+                return True, full_query
+
         return (False, None)
     
     def getName(self):

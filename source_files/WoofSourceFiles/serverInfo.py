@@ -12,6 +12,8 @@ PORT = 8000
 # dont touch-
 URL_IP = 'http://' + IP
 
+MANAGER_PANEL_HOST = 'wafmanagerpanel202.com'
+
 
 def getIpFromUrl(urlIn : str):        
     for url in URL_TO_IP:

@@ -13,12 +13,12 @@ class SecurityRuleEngine:
     def add_rule(self, rule: SecurityBreak):
         self.rules.append(rule)
 
-    def is_request_malicious(self, request : fastapi.Request, clientIp : str):
+    async def is_request_malicious(self, request : fastapi.Request, clientIp : str):
         request_url = request.url.path
         event = SecurityEvent(request)
         
         for rule in self.rules:
-            check= rule.checkThreats(request, clientIp)
+            check= await rule.checkThreats(request, clientIp)
             if check[0] :
                 # The request is malicious, so log it and block it
                 event.addBreak(rule)
