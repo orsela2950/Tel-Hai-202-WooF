@@ -2,14 +2,16 @@ import datetime
 import fastapi
 import aiohttp
 import os
+import asyncio
 import serverInfo
 from uvicorn import run
 from SecurityRuleEngine import SecurityRuleEngine
+from Ddos import Ddos
 
 #import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
 from Securitybreaks.HPP import HPP as securityRule_HPP
-from Securitybreaks.SSIinjection import SSIinjection as securityRule_SSIinjection
+from Securitybreaks.SSIInjection import SSIInjection as securityRule_SSIInjection
 from Securitybreaks.OpenRedirect import OpenRedirect as securityRule_OpenRedirect
 from Securitybreaks.SQLInjection import SQLInjection as securityRule_SQLInjection
 from Securitybreaks.XSS import XSS as securityRule_XSS
@@ -22,10 +24,12 @@ app = fastapi.FastAPI()
 # Create a SecurityRuleEngine instance
 rule_engine = SecurityRuleEngine()
 
+ddos = Ddos()
+
 # Add rules to the SecurityRuleEngine instance
 rule_engine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
 rule_engine.add_rule(securityRule_HPP())
-rule_engine.add_rule(securityRule_SSIinjection())
+rule_engine.add_rule(securityRule_SSIInjection())
 rule_engine.add_rule(securityRule_OpenRedirect())
 rule_engine.add_rule(securityRule_SQLInjection())
 rule_engine.add_rule(securityRule_XSS())
@@ -48,7 +52,14 @@ async def proxy(path: str, request: fastapi.Request):
         log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.datetime.now(), request.client.host,request.client.port,url,ipead_url))
         log_file.close()
 
-    malicious_event = rule_engine.is_request_malicious(request, request.client.host)
+    diff_ddos=await ddos.packet_into_stuck(request)
+    if diff_ddos[0]:
+        error_response = f"Ddos attack deteced, {diff_ddos[1]}"
+        print(error_response)
+        return fastapi.Response(content=error_response, status_code=400)
+    
+    
+    malicious_event = await rule_engine.is_request_malicious(request, request.client.host)
     if malicious_event.thereIsRisk():
         error_response = f"Malicious request detected: {malicious_event.returnRisks()}"
         print(error_response)

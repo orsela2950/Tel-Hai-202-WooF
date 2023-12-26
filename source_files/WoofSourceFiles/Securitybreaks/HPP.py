@@ -7,7 +7,7 @@ class HPP(SecurityBreak):
     def __init__(self):
      self.name = "HTTP Parameter Pollution"
     
-    def checkThreats(self, request: fastapi.Request, clientIp : str):
+    async def checkThreats(self, request: fastapi.Request, clientIp : str):
         """
     Function that checks if a request contains HTTP Parameter Pollution (HPP).
         First, it checks for HPP in the parameters when entered in the URL directly

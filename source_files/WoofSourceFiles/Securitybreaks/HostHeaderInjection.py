@@ -9,7 +9,7 @@ class HostHeaderInjection(SecurityBreak):
         self.serverInfoModule = serverInfoModuleIn
         self.debugPrints = False
         
-    def checkThreats(self, request: fastapi.Request, clientIp : str):
+    async def checkThreats(self, request: fastapi.Request, clientIp : str):
         """gets a request and checks if it got the host header injection in it
 
         Args:
