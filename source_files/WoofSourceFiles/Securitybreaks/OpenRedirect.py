@@ -8,7 +8,7 @@ class OpenRedirect(SecurityBreak):
      self.name = "Open Redirect Vulnerability"
     
     async def checkThreats(self, request: fastapi.Request, clientIp: str) -> Tuple[bool, str]:
-        with open('Securitybreaks/allowed_urls.txt', 'r') as f:
+        with open('source_files\\WoofSourceFiles\\Securitybreaks\\allowed_urls.txt', 'r') as f:
             allowed_urls = f.readlines()
             f.close()
 

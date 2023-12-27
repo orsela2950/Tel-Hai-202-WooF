@@ -1,5 +1,5 @@
 import threading
-from queue import Queue
+import time
 import fastapi
 import hashlib
 import json
@@ -7,86 +7,42 @@ import json
 class Ddos():
     def __init__(self):
         self._size = 10
-        self._timeout = 5 #sec before request delete from queue
-        
-        self._lock = threading.Lock() #lock for keep the shared varibles safe
-        self._packetsQueue = Queue(maxsize = self._size)
-        self._timers = {}
+        self._timeout = 5  # sec before removing hash from map
+
+        self._hash_time_map = {}  # Map to store hashes and timestamps
+
 
     async def packet_into_stuck(self, request: fastapi.Request):
-        """Get request and check if the request is part of Ddos attack
+        """Checks for potential DDoS attack using a hash-time map.
 
         Args:
-            request (fastapi.Request): the request to check (as recieved from client)
+            request (fastapi.Request): The incoming request to check.
 
         Returns:
-            (Bool,String): true if there is a Ddos attack,false if isn't. string for info about the attack
+            (bool, str): True and a message if a potential DDoS is detected,
+                        False and None otherwise.
         """
-
         
+        # Calculate the hash of the request payload
+        payload_hash = hashlib.sha256(await request.body()).hexdigest()
+
+        # Check if the hash is already in the maprequest.body()
+        if (payload_hash in self._hash_time_map):
+            if (time.time() - self._hash_time_map[payload_hash]) <= self._timeout:
+                await self.add_to_map(payload_hash)
+                return True, f"identical payloads"
+            else:
+                del self._hash_time_map[payload_hash]
+
+        await self.add_to_map(payload_hash)
+        return False, None
+
+    async def add_to_map(self,payload_hash):
+        # Check if the map is full
+        if len(self._hash_time_map) >= self._size:
+            # If full, remove the least recently used entry (LRU)
+            lru_hash = min(self._hash_time_map, key=self._hash_time_map.get)
+            del self._hash_time_map[lru_hash]
         
-        with self._lock:
-            if not self._packetsQueue.empty(): #check if queue is empty
-                # Convert the queue to a list
-                list_queue = list(self._packetsQueue.queue)
-                
-                # Iterate over the reversed list (from newest to oldest)
-                for packet in reversed(list_queue):
-                    try:
-                        # Check if the body is not empty
-                        if await packet.body():
-                            diff = await self.compare_payloads(packet.json(), request.json())
-                            print(diff[1])
-                            return (True,f"Payloads are identical: {json.dumps(await request.json(), sort_keys=True)}") if diff[0] else (False,None) 
-                    except Exception as e:
-                        print(f"Error processing packet: {str(e)}")
-            
-            #if queue is full pop the first in queue, first in first out
-            if self._packetsQueue.full():
-                self._packetsQueue.get()
-            
-            self._packetsQueue.put(request)
-
-            # Set a timer for other packets with a delay of "self._timeout" seconds
-            timer = threading.Timer(self._timeout, self.handle_packet_lifetime, args=(request,))
-            self._timers[request] = timer
-            timer.start()
-            return False,None
-
-    def handle_packet_lifetime(self, request: fastapi.Request):
-        with self._lock:
-            try:
-                # Remove the specific packet from the queue
-                self._packetsQueue.queue.remove(request)
-            except ValueError:
-                pass
-
-            # Remove the specific timer from the dictionary
-            if request in self._timers:
-                timer = self._timers.pop(request)
-                timer.cancel()
-                
-    async def compare_payloads(self,request_body1, request_body2):
-
-        try:
-            body1 = await request_body1
-            body2 = await request_body2
-        except Exception as e:
-            # Handle the exception
-            return f"Error getting JSON: {str(e)}"
-
-        # Convert dictionaries to JSON strings
-        json_body1 = json.dumps(body1, sort_keys=True)
-        json_body2 = json.dumps(body2, sort_keys=True)
-
-        # Hash the JSON strings
-        hash1 = hashlib.sha256(json_body1.encode()).hexdigest()
-        hash2 = hashlib.sha256(json_body2.encode()).hexdigest()
-
-        # Compare the hash values
-        if hash1 == hash2:
-            return True,"Payloads are identical."
-        else:
-            return False,"Payloads are different."
-        
-            
+        # Add the hash and current timestamp to the map
+        self._hash_time_map[payload_hash] = time.time()

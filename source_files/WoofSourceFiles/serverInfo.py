@@ -23,7 +23,7 @@ MANAGER_PANEL_HOST = 'wafmanagerpanel202.com'
 
 def get_json_argument(key: str):
     with filelock.FileLock("server_properties.json.lock"):
-        with open("server_properties.json", "r") as f:
+        with open("source_files\\WoofSourceFiles\\server_properties.json", "r") as f:
             return json.load(f)[key]
 
 
