@@ -1,5 +1,6 @@
 import json
 import filelock
+import os
 
 """
 commit for now - will be deleted
@@ -23,8 +24,15 @@ MANAGER_PANEL_HOST = 'wafmanagerpanel202.com'
 
 def get_json_argument(key: str):
     with filelock.FileLock("server_properties.json.lock"):
-        with open("source_files\\WoofSourceFiles\\server_properties.json", "r") as f:
+        with findFile_Read("server_properties.json","source_files\\WoofSourceFiles") as f:
             return json.load(f)[key]
+
+def findFile_Read(name, path):
+    filePath=""
+    for root, dirs, files in os.walk(os.getcwd()):
+        if name in files:
+            return open(os.path.join(root, name),"r")
+    return open(path+"\\"+name,"a")        
 
 
 def get_server_host():
