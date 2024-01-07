@@ -41,10 +41,8 @@ class SecurityRuleEngine:
         log_data = {
             "@timestamp": datetime.datetime.now().isoformat(),
             "client_ip": event.ip,
-            "request_url": str(event.request.headers.get("URL")),
-            "security_breaks": [str(risk.getName()) for risk in event.SecurityRisks],
-            "request_headers": event.returnRequestHeaders(),
-            "request_body": event.returnRequestBody(),
+            "request_Host": str(event.request.headers.get("host")),
+            "security_breaks": [str(risk.getName()) for risk in event.SecurityRisks]
         }
 
         # Index the log data to Elasticsearch

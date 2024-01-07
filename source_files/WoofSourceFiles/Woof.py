@@ -68,8 +68,7 @@ async def proxy(path: str, request: fastapi.Request):
         "client_host": request.client.host,
         "port":request.client.port,
         "url": url,
-        "target_url": ipead_url,
-        "request_body": str(re.sub(r"[<>&]", r"\&", str(request.body)))
+        "target_url": ipead_url
     }
     # Index the log data to Elasticsearch
     es.index(index="requests", body=log_data)
