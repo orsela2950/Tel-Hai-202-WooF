@@ -21,6 +21,10 @@ from Securitybreaks.XSS import XSS as securityRule_XSS
 from Securitybreaks.XST import XST as securityRule_XST
 from Security.SecurityEvent import SecurityEvent
 
+import warnings
+from elasticsearch.exceptions import ElasticsearchWarning
+warnings.simplefilter('ignore', ElasticsearchWarning)
+
 # Create a FastAPI app instance
 app = fastapi.FastAPI()
 
@@ -48,7 +52,7 @@ rule_engine.add_rule(securityRule_XST())
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
 async def proxy(path: str, request: fastapi.Request):
     refresh_blacklist()
-    check_ban=check_ip_ban()
+    check_ban=check_ip_ban(request.client.host)
     if check_ban[0]:
         error_response = f"You are banned for this reason: {check_ban[2]}\n"
 
@@ -72,14 +76,14 @@ async def proxy(path: str, request: fastapi.Request):
 
     with rule_engine.findFile_Write("waf.log", "source_files/WoofSourceFiles/Logs") as log_file:
         # Log the request
-        log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.datetime.now(), request.client.host,
+        log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.now(), request.client.host,
                                                                           request.client.port, url, ipead_url))
         log_file.close()
         
         
      # Log the request to Elasticsearch
     log_data = {
-        "@timestamp": datetime.datetime.now().isoformat(),
+        "@timestamp": datetime.now().isoformat(),
         "request_method": request.method,
         "client_host": request.client.host,
         "port":request.client.port,
