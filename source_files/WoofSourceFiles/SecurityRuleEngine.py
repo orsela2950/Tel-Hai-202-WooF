@@ -33,7 +33,7 @@ class SecurityRuleEngine:
 
     def log_security_break(self,event): 
         # Log the security break
-        with self.findFile_Write("securityEvents.log","source_files\WoofSourceFiles\Logs") as log_file:
+        with self.findFile_Write("securityEvents.log","source_files\\WoofSourceFiles\\Logs") as log_file:
             log_file.write(event.printEventDescription())
             log_file.close()
         

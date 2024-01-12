@@ -1,4 +1,5 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
+from Ddos import Ddos
 import datetime
 import re
 import fastapi
@@ -23,7 +24,7 @@ class SecurityEvent:
                 )
             )
 
-    def addBreak(self,risk: SecurityBreak):
+    def addBreak(self,risk: SecurityBreak or Ddos):
          if not any(risk == breaker for breaker in self.SecurityRisks):
               self.SecurityRisks.append(risk)
     

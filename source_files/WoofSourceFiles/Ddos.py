@@ -6,8 +6,9 @@ import json
 
 class Ddos():
     def __init__(self):
+        self._name="Ddos"
         self._size = 10
-        self._timeout = 5  # sec before removing hash from map
+        self._timeout = 2  # sec before removing hash from map
 
         self._hash_time_map = {}  # Map to store hashes and timestamps
 
@@ -46,3 +47,6 @@ class Ddos():
         
         # Add the hash and current timestamp to the map
         self._hash_time_map[payload_hash] = time.time()
+        
+    def getName(self):
+        return self._name

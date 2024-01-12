@@ -6,17 +6,18 @@ PUNISHMENTS_DB_NAME = 'waf_blacklist.db'
 
 
 def refresh_blacklist() -> None:
-    """Removes expired bans from the blacklist table.
-    No need to use everytime, only for cleaning the database once in a while
+    """Updates expiration dates for expired bans in the blacklist table.
+    No need to use every time, only for cleaning the database once in a while
     """
     with sqlite3.connect(PUNISHMENTS_DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
-            DELETE FROM blacklist
+            UPDATE blacklist
+            SET expiration_date = ?
             WHERE expiration_date <= ?
             """,
-            (datetime.now(),)
+            (datetime.now(), datetime.now())
         )
         conn.commit()
 
@@ -25,12 +26,11 @@ def check_ip_ban(ip_address: str) -> tuple:
     """Checks if an IP address is banned, returning ban information if found and active.
 
     Args:
-        conn: The SQLite connection object.
         ip_address: The IP address to check.
 
     Returns:
-        A tuple containing (is_banned, ip_address, reason, expiration_date, source)
-        if the IP is banned and the ban is active, otherwise (False, None, None, None, None).
+        A tuple containing (is_banned, ip_address, reason, strikes, expiration_date, ban)
+        if the IP is banned and the ban is active, otherwise (False, None, None, None, None, None).
     """
     with sqlite3.connect(PUNISHMENTS_DB_NAME) as conn:
         cursor = conn.cursor()
@@ -39,11 +39,12 @@ def check_ip_ban(ip_address: str) -> tuple:
             SELECT *
             FROM blacklist
             WHERE ip_address = ?
-            AND expiration_date > ?
+            AND 
+            (expiration_date > ? OR ban = ?) 
             ORDER BY expiration_date DESC
             LIMIT 1
             """,
-            (ip_address, datetime.now())  # Check for current time
+            (ip_address, datetime.now(),True)  # Check for current time
         )
 
         ban_data = cursor.fetchone()
@@ -51,36 +52,85 @@ def check_ip_ban(ip_address: str) -> tuple:
         if ban_data:
             is_banned = True
             reason = ban_data[2]
-            expiration_date = ban_data[3]
-            source = ban_data[4]
-            return is_banned, ip_address, reason, expiration_date, source
+            strikes = ban_data[3]
+            expiration_date = ban_data[4]
+            ban = ban_data[5]
+            return is_banned, ip_address, reason, strikes, expiration_date, ban
         else:
-            return False, None, None, None, None
+            return False, None, None, None, None, None
+
+def remove_user_ban(ip_address: str) -> None:
+    """Removes ban for a specific user.
+
+    Args:
+        ip_address: The IP address to remove the ban for.
+    """
+    with sqlite3.connect(PUNISHMENTS_DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            UPDATE blacklist
+            SET ban = ?,
+            expiration_date = ?,
+            WHERE ip_address = ?
+            """,
+            (False,datetime.now(),ip_address)
+        )
+        conn.commit()
+
+
+
 
 
 def insert_blacklisted_user(
-    #conn: sqlite3.Connection,  # Type hint for the database connection
     ip_address: str,
     expiration_date: datetime,
-    reason: str = "Not specified",  # Optional parameter with default value
-    source: str = "Unknown"  # Optional parameter with default value
+    new_reason: str = "Not specified"
 ) -> None:
     """Inserts a user into the blacklist table with optional reason and source.
 
     Args:
-        - conn: The SQLite connection object. -
         ip_address: The IP address to blacklist.
         expiration_date: The date and time when the ban should expire.
-        reason: An optional reason for blacklisting the IP address.
-        source: An optional source of information for the blacklisting.
+        new_reason: An optional new reason for blacklisting the IP address.
     """
 
     with sqlite3.connect(PUNISHMENTS_DB_NAME) as conn:
         cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO blacklist (ip_address, reason, expiration_date, source) VALUES (?, ?, ?, ?)",
-            (ip_address, reason, expiration_date, source),
-        )
+
+        # Check if the user is already in the blacklist
+        cursor.execute("SELECT * FROM blacklist WHERE ip_address = ?", (ip_address,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+             # User already exists, update the reasons, strikes, and expiration_date
+            current_reason = existing_user[2]
+            current_strikes = existing_user[3] + 1
+            current_expiration_date = existing_user[4]
+            current_ban_status = existing_user[5]
+
+            updated_reasons = f"{current_reason}, {new_reason}"
+
+            # Update expiration date to be the sum of both expiration dates
+            updated_expiration_date = current_expiration_date + (expiration_date - datetime.now())
+
+            cursor.execute(
+                "UPDATE blacklist SET reason = ?, strikes = ?, expiration_date = ? WHERE ip_address = ?",
+                (updated_reasons, current_strikes, updated_expiration_date, ip_address),
+            )
+            # Check if the user has reached 3 strikes and update ban status
+            if current_strikes >= 3 and not current_ban_status:
+                cursor.execute(
+                    "UPDATE blacklist SET strike = ?,ban = ? WHERE ip_address = ?",
+                    (0,True,ip_address),
+                )
+        else:
+            # User doesn't exist, insert a new record
+            cursor.execute(
+                "INSERT INTO blacklist (ip_address, reason, strikes, expiration_date, ban) VALUES (?, ?, ?, ?, ?)",
+                (ip_address, new_reason, 1, expiration_date, False),
+            )
+
         conn.commit()
 
 
@@ -96,8 +146,9 @@ def validateTable() -> None:
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   ip_address TEXT NOT NULL,
   reason TEXT,
+  strikes INTEGER,
   expiration_date DATETIME NOT NULL,
-  source TEXT);""")
+  ban BOOL);""")
 
             # strikes table: future use
             cursor.execute("""""")

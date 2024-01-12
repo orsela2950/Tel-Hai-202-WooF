@@ -7,6 +7,7 @@ import serverInfo
 import re
 from uvicorn import run
 from SecurityRuleEngine import SecurityRuleEngine
+from punishment_manager import *
 from Ddos import Ddos
 from elasticsearch import Elasticsearch
 
@@ -18,7 +19,7 @@ from Securitybreaks.OpenRedirect import OpenRedirect as securityRule_OpenRedirec
 from Securitybreaks.SQLInjection import SQLInjection as securityRule_SQLInjection
 from Securitybreaks.XSS import XSS as securityRule_XSS
 from Securitybreaks.XST import XST as securityRule_XST
-import Security.SecurityEvent as SecurityEvent
+from Security.SecurityEvent import SecurityEvent
 
 # Create a FastAPI app instance
 app = fastapi.FastAPI()
@@ -46,6 +47,21 @@ rule_engine.add_rule(securityRule_XST())
 # Define a route that can handle any HTTP method and any path
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
 async def proxy(path: str, request: fastapi.Request):
+    refresh_blacklist()
+    check_ban=check_ip_ban()
+    if check_ban[0]:
+        error_response = f"You are banned for this reason: {check_ban[2]}\n"
+
+        # Check if the ban is not permanent (ban column is False)
+        if not check_ban[5]:
+            expiration_date = check_ban[4]
+            error_response += f"The ban will expire on: {expiration_date}\n"
+
+        print(error_response)
+        return fastapi.Response(content=error_response, status_code=400)
+    
+    
+    
     # Get the original destination(host) from the request headers
     host = serverInfo.remove_scheme(request.headers.get("Host"))
     # Construct the full URL of the original destination(host)
@@ -75,13 +91,14 @@ async def proxy(path: str, request: fastapi.Request):
         
         
         
-        
-
-
+    
     diff_ddos = await ddos.packet_into_stuck(request)
     if diff_ddos[0]:
         error_response = f"Ddos attack deteced, {diff_ddos[1]}"
         print(error_response)
+        DdosEvent = SecurityEvent(request)
+        DdosEvent.addBreak(ddos)
+        rule_engine.log_security_break(DdosEvent)
         return fastapi.Response(content=error_response, status_code=400)
 
     malicious_event = await rule_engine.is_request_malicious(request, request.client.host)
