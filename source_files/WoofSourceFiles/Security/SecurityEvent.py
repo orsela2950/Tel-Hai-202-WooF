@@ -32,4 +32,10 @@ class SecurityEvent:
     
     def returnRisks(self):
          return [risk.getName() for risk in self.SecurityRisks]
+     
+    def returnRequestBody(self):
+        return str(re.sub(r"[<>&]", r"\&", str(self.request.body)))
+    
+    def returnRequestHeaders(self):
+        return str(re.sub(r"[<>&]", r"\&", str(self.request.headers)))
     

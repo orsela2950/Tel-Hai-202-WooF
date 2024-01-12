@@ -4,9 +4,11 @@ import aiohttp
 import os
 import asyncio
 import serverInfo
+import re
 from uvicorn import run
 from SecurityRuleEngine import SecurityRuleEngine
 from Ddos import Ddos
+from elasticsearch import Elasticsearch
 
 # import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
@@ -21,10 +23,15 @@ import Security.SecurityEvent as SecurityEvent
 # Create a FastAPI app instance
 app = fastapi.FastAPI()
 
+es = Elasticsearch("http://localhost:9200")
+
 # Create a SecurityRuleEngine instance
-rule_engine = SecurityRuleEngine()
+rule_engine = SecurityRuleEngine(es)
 
 ddos = Ddos()
+
+    
+
 
 # Add rules to the SecurityRuleEngine instance
 rule_engine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
@@ -47,11 +54,29 @@ async def proxy(path: str, request: fastapi.Request):
     # Log the request
     print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
 
-    with rule_engine.findFile("waf.log", "source_files/WoofSourceFiles/Logs") as log_file:
+    with rule_engine.findFile_Write("waf.log", "source_files/WoofSourceFiles/Logs") as log_file:
         # Log the request
         log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.datetime.now(), request.client.host,
                                                                           request.client.port, url, ipead_url))
         log_file.close()
+        
+        
+     # Log the request to Elasticsearch
+    log_data = {
+        "@timestamp": datetime.datetime.now().isoformat(),
+        "request_method": request.method,
+        "client_host": request.client.host,
+        "port":request.client.port,
+        "url": url,
+        "target_url": ipead_url
+    }
+    # Index the log data to Elasticsearch
+    es.index(index="requests", body=log_data)
+        
+        
+        
+        
+
 
     diff_ddos = await ddos.packet_into_stuck(request)
     if diff_ddos[0]:
@@ -68,7 +93,8 @@ async def proxy(path: str, request: fastapi.Request):
     try:
         # Extract the target URL from the path
         target_url = serverInfo.get_server_ipead_url() + ':' + str(serverInfo.get_server_port()) + '/' + path
-
+        
+        
         # Create an async HTTP client session
         async with aiohttp.ClientSession() as session:
             # Construct the request object using the FastAPI `Request` object
