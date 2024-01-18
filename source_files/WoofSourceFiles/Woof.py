@@ -15,6 +15,8 @@ from Ddos import Ddos
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ElasticsearchWarning
 
+import punishment_manager
+
 # import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
 from Securitybreaks.HPP import HPP as securityRule_HPP
@@ -28,14 +30,14 @@ from Security.SecurityEvent import SecurityEvent
 
 warnings.simplefilter('ignore', ElasticsearchWarning)
 
+# Declare debugging state
+_DEBUGGING = True
 # Create a FastAPI app instance
 app = fastapi.FastAPI()
-
+# Create Elasticsearch obj
 es = Elasticsearch("http://localhost:9200")
-
 # Create a SecurityRuleEngine instance
 rule_engine = SecurityRuleEngine(es)
-
 ddos = Ddos()
 
     
@@ -54,18 +56,25 @@ rule_engine.add_rule(securityRule_XST())
 # Define a route that can handle any HTTP method and any path
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
 async def proxy(path: str, request: fastapi.Request):
-    refresh_blacklist()
-    check_ban=check_ip_ban(request.client.host)
-    if check_ban[0]:
-        error_response = f"You are banned for this reason: {check_ban[2]}\n"
-
-        # Check if the ban is not permanent (ban column is False)
-        if not check_ban[5]:
-            expiration_date = check_ban[4]
-            error_response += f"The ban will expire on: {expiration_date}\n"
-
-        print(error_response)
-        return fastapi.Response(content=error_response, status_code=400)
+    """Handles a request, checking for IP bans and returning appropriate responses."""
+    check_ban = check_ip_ban(request.client.host)
+    if check_ban[0]:  # IP is banned
+        try:
+            ip, reason, expiration, source = check_ban[1:]  # Unpack ban details
+            error_response = f"""
+            <h1>Access Denied</h1>
+            <p>Your IP address ({ip}) has been temporarily banned due to:</p>
+            <blockquote>{reason}</blockquote>
+            <p>Ban expires on: {expiration}</p>
+            <p>Ban source: {source}</p>
+            """
+        except ValueError:  # Handle potential errors in ban details
+            error_response = """
+            <h1>Access Denied</h1>
+            <p>Your IP address has been banned, but detailed information is unavailable.</p>
+            """
+        if _DEBUGGING: print("Access Denied response sent to", check_ban[1])
+        return fastapi.Response(content=error_response, status_code=403)  # Use 403 Forbidden for clarity
     
     
     
@@ -75,7 +84,7 @@ async def proxy(path: str, request: fastapi.Request):
     url = f"http://{host}/{path}"
     ipead_url = f"http://{serverInfo.get_server_ip()}:{serverInfo.get_server_port()}/{path}"
     # Log the request
-    print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
+    if _DEBUGGING: print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
 
     with rule_engine.findFile_Write("waf.log", "source_files/WoofSourceFiles/Logs") as log_file:
         # Log the request
@@ -102,7 +111,7 @@ async def proxy(path: str, request: fastapi.Request):
     diff_ddos = await ddos.packet_into_stuck(request)
     if diff_ddos[0]:
         error_response = f"Ddos attack deteced, {diff_ddos[1]}"
-        print(error_response)
+        if _DEBUGGING: print(error_response)
         DdosEvent = SecurityEvent(request)
         DdosEvent.addBreak(ddos)
         rule_engine.log_security_break(DdosEvent)
@@ -111,7 +120,7 @@ async def proxy(path: str, request: fastapi.Request):
     malicious_event = await rule_engine.is_request_malicious(request, request.client.host)
     if malicious_event.thereIsRisk():
         error_response = f"Malicious request detected: {malicious_event.returnRisks()}"
-        print(error_response)
+        if _DEBUGGING: print(error_response)
         return fastapi.Response(content=error_response, status_code=400)
 
     try:
@@ -156,7 +165,7 @@ async def proxy(path: str, request: fastapi.Request):
 
     except Exception as e:
         # Handle other exceptions
-        print(f"An unexpected error occurred: {e}")
+        if _DEBUGGING: print(f"An unexpected error occurred: {e}")
         return fastapi.Response(content=f"An unexpected error occurred: {e.args}", status_code=500)
 
 if __name__ == "__main__":
