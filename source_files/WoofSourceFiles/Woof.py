@@ -5,11 +5,15 @@ import os
 import asyncio
 import serverInfo
 import re
+import subprocess
+import time
+import warnings
 from uvicorn import run
 from SecurityRuleEngine import SecurityRuleEngine
 from punishment_manager import *
 from Ddos import Ddos
 from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import ElasticsearchWarning
 
 # import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
@@ -21,8 +25,7 @@ from Securitybreaks.XSS import XSS as securityRule_XSS
 from Securitybreaks.XST import XST as securityRule_XST
 from Security.SecurityEvent import SecurityEvent
 
-import warnings
-from elasticsearch.exceptions import ElasticsearchWarning
+
 warnings.simplefilter('ignore', ElasticsearchWarning)
 
 # Create a FastAPI app instance
