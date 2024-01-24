@@ -1,14 +1,16 @@
 import os
 import sqlite3
 from datetime import datetime, timedelta
-
-PUNISHMENTS_DB_NAME = 'waf_blacklist.db'
+import os
+PUNISHMENTS_DB_NAME = 'punishment_db.db'
+current_dir = os.path.dirname(os.path.realpath(__file__))
+PUNISHMENTS_DB_FULL_PATH = os.path.join(current_dir, PUNISHMENTS_DB_NAME)
 
 
 def validate_table() -> None:
     """Validate that the databases exists and if not creating them."""
     # create the table
-    with sqlite3.connect(PUNISHMENTS_DB_NAME) as conn:
+    with sqlite3.connect(PUNISHMENTS_DB_FULL_PATH) as conn:
         # create all tables for the woof to work properly
         cursor = conn.cursor()
         # blacklist table:
@@ -21,10 +23,10 @@ source TEXT);""")
 
         # strikes table: future use
         cursor.execute("""CREATE TABLE IF NOT EXISTS strikes (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  ip_address TEXT NOT NULL,
-  reason TEXT,
-  expiration_date DATETIME);""")
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+ip_address TEXT NOT NULL,
+reason TEXT,
+expiration_date DATETIME);""")
         conn.commit()
 
 
