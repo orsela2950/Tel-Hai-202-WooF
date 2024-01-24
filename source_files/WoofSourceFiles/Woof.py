@@ -1,21 +1,15 @@
 import datetime
 import fastapi
 import aiohttp
-import os
-import asyncio
 import serverInfo
-import re
-import subprocess
-import time
-import warnings
 from uvicorn import run
 from SecurityRuleEngine import SecurityRuleEngine
 from punishment_manager import *
-from Ddos import Ddos
-from elasticsearch import Elasticsearch
-from elasticsearch.exceptions import ElasticsearchWarning
 
+# Custom modules import
 import punishment_manager
+from logger import Logger
+from Ddos import Ddos
 
 # import the security breaks
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
@@ -27,21 +21,15 @@ from Securitybreaks.XSS import XSS as securityRule_XSS
 from Securitybreaks.XST import XST as securityRule_XST
 from Security.SecurityEvent import SecurityEvent
 
-
-warnings.simplefilter('ignore', ElasticsearchWarning)
-
 # Declare debugging state
 _DEBUGGING = True
 # Create a FastAPI app instance
 app = fastapi.FastAPI()
-# Create Elasticsearch obj
-es = Elasticsearch("http://localhost:9200")
 # Create a SecurityRuleEngine instance
-rule_engine = SecurityRuleEngine(es)
+rule_engine = SecurityRuleEngine()
+# Create a Logger instance
+logger = Logger(_DEBUGGING)
 ddos = Ddos()
-
-    
-
 
 # Add rules to the SecurityRuleEngine instance
 rule_engine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
@@ -58,7 +46,7 @@ rule_engine.add_rule(securityRule_XST())
 async def proxy(path: str, request: fastapi.Request):
     """Handles a request, checking for IP bans and returning appropriate responses."""
     check_ban = check_ip_ban(request.client.host)
-    if check_ban[0]:  # IP is banned
+    if check_ban[0]:  # If IP is banned
         try:
             ip, reason, expiration, source = check_ban[1:]  # Unpack ban details
             error_response = f"""
@@ -75,59 +63,40 @@ async def proxy(path: str, request: fastapi.Request):
             """
         if _DEBUGGING: print("Access Denied response sent to", check_ban[1])
         return fastapi.Response(content=error_response, status_code=403)  # Use 403 Forbidden for clarity
-    
-    
-    
+
     # Get the original destination(host) from the request headers
     host = serverInfo.remove_scheme(request.headers.get("Host"))
     # Construct the full URL of the original destination(host)
     url = f"http://{host}/{path}"
     ipead_url = f"http://{serverInfo.get_server_ip()}:{serverInfo.get_server_port()}/{path}"
+
     # Log the request
     if _DEBUGGING: print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
+    logger.log_main(request.method, request.client.host, request.client.port, url, ipead_url)
 
-    with rule_engine.findFile_Write("waf.log", "source_files/WoofSourceFiles/Logs") as log_file:
-        # Log the request
-        log_file.write("[{}] Request received: {}:{} -> {} ->{}\n".format(datetime.now(), request.client.host,
-                                                                          request.client.port, url, ipead_url))
-        log_file.close()
-        
-        
-     # Log the request to Elasticsearch
-    log_data = {
-        "@timestamp": datetime.now().isoformat(),
-        "request_method": request.method,
-        "client_host": request.client.host,
-        "port":request.client.port,
-        "url": url,
-        "target_url": ipead_url
-    }
-    # Index the log data to Elasticsearch
-    es.index(index="requests", body=log_data)
-        
-        
-        
-    
     diff_ddos = await ddos.packet_into_stuck(request)
     if diff_ddos[0]:
-        error_response = f"Ddos attack deteced, {diff_ddos[1]}"
+        error_response = f"Ddos attack deteced, {diff_ddos[1]}" + \
+                         "Be careful! you just got a strike! 3 strikes and your be banned for life"
         if _DEBUGGING: print(error_response)
-        DdosEvent = SecurityEvent(request)
-        DdosEvent.addBreak(ddos)
-        rule_engine.log_security_break(DdosEvent)
+        ddos_event = SecurityEvent(request)
+        ddos_event.add_break(ddos)
+        logger.log_security(ddos_event)
+        punishment_manager.strike_user(request.client.host, "DOS attack prevention")
         return fastapi.Response(content=error_response, status_code=400)
 
     malicious_event = await rule_engine.is_request_malicious(request, request.client.host)
-    if malicious_event.thereIsRisk():
-        error_response = f"Malicious request detected: {malicious_event.returnRisks()}"
+    if malicious_event.is_there_risk():
+        error_response = f"Malicious request detected: {malicious_event.return_risks()}" + \
+                         "Be careful! you just got a strike! 3 strikes and your be banned for life"
         if _DEBUGGING: print(error_response)
+        punishment_manager.strike_user(request.client.host, "DOS attack prevention")
         return fastapi.Response(content=error_response, status_code=400)
 
     try:
         # Extract the target URL from the path
         target_url = serverInfo.get_server_ipead_url() + ':' + str(serverInfo.get_server_port()) + '/' + path
-        
-        
+
         # Create an async HTTP client session
         async with aiohttp.ClientSession() as session:
             # Construct the request object using the FastAPI `Request` object
@@ -167,6 +136,7 @@ async def proxy(path: str, request: fastapi.Request):
         # Handle other exceptions
         if _DEBUGGING: print(f"An unexpected error occurred: {e}")
         return fastapi.Response(content=f"An unexpected error occurred: {e.args}", status_code=500)
+
 
 if __name__ == "__main__":
     # Run the FastAPI app using uvicorn and specify the host and port to listen on
