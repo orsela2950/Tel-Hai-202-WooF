@@ -1,15 +1,17 @@
 import requests
 import urllib.parse
 
+
 def is_request_hpp(request_url):
     parsed_url = urllib.parse.urlparse(request_url)
     params_dict = urllib.parse.parse_qs(parsed_url.query)
-    
+
     for param_name, param_values in params_dict.items():
         if len(param_values) > 1:
             return True, f"{param_name}={param_values}"
 
     return False, None
+
 
 # Example URL with HPP: multiple values for the 'name' parameter
 url_with_hpp_direct = "http://testwaf202.com/path?name=a&name=b"

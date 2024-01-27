@@ -17,18 +17,13 @@ class SecurityEvent:
         self.currentTime = datetime.datetime.now()
         self.SecurityRisks = []
 
-    # def printEventDescription(self):
-    #     security_breaks = ", ".join([risk.getName() for risk in self.SecurityRisks])
-    #     return (
-    #         "[{}] Malicious request detected from {} to {} | detected: {} | headers:({})\n".format(
-    #             datetime.datetime.now(),
-    #             self.request.client.host,
-    #             self.request.url,
-    #             security_breaks,
-    #             self.returnRequestHeaders(),
-    #             # self.returnRequestBody(),
-    #         )
-    #     )
+    def printEventDescription(self):
+        security_breaks = ", ".join([risk.getName() for risk in self.SecurityRisks])
+        return (
+            "You've been caught doing: {}".format(
+                security_breaks
+            )
+        )
 
     def add_break(self, risk: SecurityBreak or Ddos):
         if not any(risk == breaker for breaker in self.SecurityRisks):
