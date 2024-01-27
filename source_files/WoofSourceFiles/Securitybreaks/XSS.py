@@ -4,23 +4,22 @@ import fastapi
 from urllib.parse import parse_qs
 import os
 
-helper=Helper()
 blocked_keyword_list = []
-blocked_content_types = ['text/html', 'application/javascript', 'application/x-shockwave-flash', 'application/xml','application/x-www-form-urlencoded']
+blocked_content_types = ['text/html', 'application/javascript', 'application/x-shockwave-flash', 'application/xml',
+                         'application/x-www-form-urlencoded']
 
-
-#load the word list:
-with helper.findFile_Read("XSS_Malicious.txt","source_files\\WoofSourceFiles\\Securitybreaks") as f:
+# load the word list:
+with Helper.findFile_Read("XSS_Malicious.txt", "source_files\\WoofSourceFiles\\Securitybreaks") as f:
     blocked_keyword_list = f.readlines()
     f.close()
-  
+
 
 class XSS(SecurityBreak):
     def __init__(self):
         self.name = "Cross Site Scripting (XSS)"
         self.debugPrints = False
-    
-    async def checkThreats(self, request: fastapi.Request, clientIp : str):
+
+    async def checkThreats(self, request: fastapi.Request, clientIp: str):
         """Check if the request contains XSS Attack
 
         Args:
@@ -30,20 +29,21 @@ class XSS(SecurityBreak):
         Returns:
             (Bool, str): true for threats found false for safe packet, a summary of the found attack if found or none
         """
-        
-        #check the content type for not allowed content types
-        if ('Content-Type' in request.headers.keys()) and (request.headers['Content-Type'].lower() in blocked_content_types):
+
+        # check the content type for not allowed content types
+        if ('Content-Type' in request.headers.keys()) and (
+                request.headers['Content-Type'].lower() in blocked_content_types):
             self.debugPrint('Content type is not allowed: ' + str(request.headers['Content-Type']))
             return True, 'Content type : ' + str(request.headers['Content-Type'])
-        
+
         for param_name, param_value in request.query_params.items():
             if True in (word in param_value for word in blocked_keyword_list):
-                self.debugPrint('blocked a packet because it cannot contain "' +param_value+ '"')
-                return True, 'The packet cant contain "'+param_value+'"'
-             
+                self.debugPrint('blocked a packet because it cannot contain "' + param_value + '"')
+                return True, 'The packet cant contain "' + param_value + '"'
+
         return False, None
-    
-    def InPacket(self, request :fastapi.Request, word :str):
+
+    def InPacket(self, request: fastapi.Request, word: str):
         """checks if a word/phrase is in the packet
 
         Args:
@@ -59,12 +59,12 @@ class XSS(SecurityBreak):
 
         if word in request.body:
             return True
-        
+
         return False
-    
+
     def getName(self):
         return self.name
-    
-    def debugPrint(self, text :str):
+
+    def debugPrint(self, text: str):
         if self.debugPrint:
             print('[XSS debug] ' + text)

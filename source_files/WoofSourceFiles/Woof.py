@@ -20,15 +20,16 @@ from Securitybreaks.SQLInjection import SQLInjection as securityRule_SQLInjectio
 from Securitybreaks.XSS import XSS as securityRule_XSS
 from Securitybreaks.XST import XST as securityRule_XST
 from Security.SecurityEvent import SecurityEvent
+from Securitybreaks.Helper import Helper
 
 # Declare debugging state
 _DEBUGGING = True
 # Create a FastAPI app instance
 app = fastapi.FastAPI()
-# Create a SecurityRuleEngine instance
-rule_engine = SecurityRuleEngine()
 # Create a Logger instance
 logger = Logger(_DEBUGGING)
+# Create a SecurityRuleEngine instance
+rule_engine = SecurityRuleEngine(logger)
 ddos = Ddos()
 
 # Add rules to the SecurityRuleEngine instance
@@ -41,6 +42,13 @@ rule_engine.add_rule(securityRule_XSS())
 rule_engine.add_rule(securityRule_XST())
 
 
+def load_ban_message(ip, reason, expiration, source):
+    with Helper.findFile_Read("ban_msg.html", "source_files\\WoofSourceFiles\\WoofManagerPanel") as html_f:
+        with Helper.findFile_Read("styles.css", "source_files\\WoofSourceFiles\\WoofManagerPanel") as css_f:
+            return html_f.read().format(css_styles=css_f.read(), ip=ip, reason=reason, expiration=expiration,
+                                        source=source)
+
+
 # Define a route that can handle any HTTP method and any path
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
 async def proxy(path: str, request: fastapi.Request):
@@ -49,13 +57,9 @@ async def proxy(path: str, request: fastapi.Request):
     if check_ban[0]:  # If IP is banned
         try:
             ip, reason, expiration, source = check_ban[1:]  # Unpack ban details
-            error_response = f"""
-            <h1>Access Denied</h1>
-            <p>Your IP address ({ip}) has been temporarily banned due to:</p>
-            <blockquote>{reason}</blockquote>
-            <p>Ban expires on: {expiration}</p>
-            <p>Ban source: {source}</p>
-            """
+
+            error_response = load_ban_message(ip, reason, expiration, source)
+
         except ValueError:  # Handle potential errors in ban details
             error_response = """
             <h1>Access Denied</h1>
@@ -90,7 +94,7 @@ async def proxy(path: str, request: fastapi.Request):
         error_response = f"Malicious request detected: {malicious_event.return_risks()}" + \
                          "Be careful! you just got a strike! 3 strikes and your be banned for life"
         if _DEBUGGING: print(error_response)
-        punishment_manager.strike_user(request.client.host, "DOS attack prevention")
+        punishment_manager.strike_user(request.client.host, "DOS attack prevention")  # not DOS event
         return fastapi.Response(content=error_response, status_code=400)
 
     try:

@@ -2,6 +2,8 @@ import os
 import time
 from Security.SecurityEvent import SecurityEvent
 import uuid
+
+
 # uuid.uuid4().hex # 32 bit uuidfor logging
 
 class Logger:
@@ -21,6 +23,7 @@ class Logger:
         log_debug(message): Logs a message to the "debug.log" file for general debugging purposes.
         close_debug_log(): Closes the "debug.log" file at the end of the program.
     """
+
     def __init__(self, debugging: bool):
         """Initializes the Logger object by creating the necessary directory and file handles."""
         # Set the debugging field

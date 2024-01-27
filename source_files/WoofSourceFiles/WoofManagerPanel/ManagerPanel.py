@@ -7,6 +7,7 @@ import os
 
 app = FastAPI()
 
+
 async def get_favicon_path():
     """Returns the full path to the favicon ICO file placed near the program."""
 
@@ -20,7 +21,10 @@ async def get_favicon_path():
 async def root(request: Request):
     return Response(content='<h1>Welcome to the woof manager panel!</h1>', status_code=200)
 
+
 app.mount("/", StaticFiles(directory="pages"), name="pages")
+
+
 # check about middleware for blocking no logged users
 
 

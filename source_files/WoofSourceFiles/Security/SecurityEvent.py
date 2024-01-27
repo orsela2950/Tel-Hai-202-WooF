@@ -1,8 +1,13 @@
-from ..Securitybreaks.SecurityBreak import SecurityBreak
-from ..Ddos import Ddos
+import sys
 import datetime
 import re
 import fastapi
+from os import path
+
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+from Securitybreaks.SecurityBreak import SecurityBreak
+from Ddos import Ddos
 
 
 class SecurityEvent:
