@@ -43,10 +43,25 @@ rule_engine.add_rule(securityRule_XST())
 
 
 def load_ban_message(ip, reason, expiration, source):
-    with Helper.findFile_Read("ban_msg.html", "source_files\\WoofSourceFiles\\WoofManagerPanel") as html_f:
-        with Helper.findFile_Read("styles.css", "source_files\\WoofSourceFiles\\WoofManagerPanel") as css_f:
+    with Helper.findFile_Read("ban_msg.html", "source_files\\WoofSourceFiles\\WoofManagerPanel\\ban_message") as html_f:
+        with Helper.findFile_Read("ban_style.css",
+                                  "source_files\\WoofSourceFiles\\WoofManagerPanel\\ban_message") as css_f:
             return html_f.read().format(css_styles=css_f.read(), ip=ip, reason=reason, expiration=expiration,
                                         source=source)
+
+
+def load_error_message(e: Exception):
+    with Helper.findFile_Read(
+            "error_msg.html", "source_files\\WoofSourceFiles\\WoofManagerPanel\\error_message") as html_f:
+        with Helper.findFile_Read(
+                "error_style.css", "source_files\\WoofSourceFiles\\WoofManagerPanel\\error_message") as css_f:
+            # Read the contents of the CSS
+            css_styles = css_f.read()
+
+            # Insert the CSS styles and error message into the HTML template
+            html_content = html_f.read().format(css_styles=css_styles, error=e)
+
+            return html_content
 
 
 # Define a route that can handle any HTTP method and any path
@@ -139,7 +154,7 @@ async def proxy(path: str, request: fastapi.Request):
     except Exception as e:
         # Handle other exceptions
         if _DEBUGGING: print(f"An unexpected error occurred: {e}")
-        return fastapi.Response(content=f"An unexpected error occurred: {e.args}", status_code=500)
+        return fastapi.Response(content=load_error_message(e), status_code=500)
 
 
 if __name__ == "__main__":
