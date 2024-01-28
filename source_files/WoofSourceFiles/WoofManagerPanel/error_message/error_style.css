@@ -3,13 +3,14 @@ body {
   background-image: radial-gradient(closest-side, #2EA3F2, #2874B8);
   text-align: center;
   color: #fff;
-  font-family: "Helvetica Neue";
+  font-family: 'Raleway';
   font-size: 16px;
   line-height: 1.5;
 }
 h1 {
   font-size: 24px;
   line-height: 40px;
+  font-family: 'Raleway';
   margin: 0 auto 16px;
   padding: 0 20px;
   text-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -20,6 +21,7 @@ h1 {
 h2 {
   font-size: 20px;
   line-height: 40px;
+  font-family: 'Raleway';
   margin: 0 auto 16px;
   padding: 0 20px;
   text-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -29,6 +31,7 @@ h2 {
 }
 p {
   color: #D6DCE0;
+  font-family: 'Raleway';
   font-weight: 300;
   max-width: 600px;
   margin: 0 auto 24px;
