@@ -1,0 +1,5 @@
+timestamp = "2024-01-28 20:06:19"
+client_ip = "127.0.0.1"
+host = "127.0.0.1"
+risks = [ "HTTP Host Header Injection",]
+

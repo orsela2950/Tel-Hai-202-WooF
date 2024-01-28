@@ -1,5 +1,6 @@
 import requests
 
+
 def test_open_redirect_detection(url):
     # Good request
     response = requests.get(url)
@@ -18,6 +19,7 @@ def test_open_redirect_detection(url):
     headers = {'Cookie': f"redirect_cookie=http://malicious-website.com; other_cookie=value"}
     response = requests.get(url, headers=headers)
     print("Should not work (Open redirect in cookie):", response.status_code, "| Content:", response.content)
+
 
 if __name__ == "__main__":
     test_open_redirect_detection("http://testwaf202.com")

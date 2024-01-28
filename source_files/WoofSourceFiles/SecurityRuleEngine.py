@@ -31,5 +31,5 @@ class SecurityRuleEngine:
                 event.add_break(rule)
                 print(rule.getName(), check[1])
         if event.is_there_risk():
-            self.logger.log_security(event)
+            self.logger.log_security_toml(event)
         return event

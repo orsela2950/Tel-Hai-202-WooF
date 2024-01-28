@@ -130,7 +130,8 @@ async def proxy(path: str, request: fastapi.Request):
             <h1>Access Denied</h1>
             <p>Your IP address has been banned, but detailed information is unavailable.</p>
             """
-        if _DEBUGGING: print("Access Denied response sent to", check_ban[1])
+        if _DEBUGGING:
+            print("Access Denied response sent to", check_ban[1])
         return fastapi.Response(content=error_response, status_code=403)  # Use 403 Forbidden for clarity
 
     # Get the original destination(host) from the request headers
@@ -140,17 +141,19 @@ async def proxy(path: str, request: fastapi.Request):
     ipead_url = f"http://{serverInfo.get_server_ip()}:{serverInfo.get_server_port()}/{path}"
 
     # Log the request
-    if _DEBUGGING: print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
-    logger.log_main(request.method, request.client.host, request.client.port, url, ipead_url)
+    if _DEBUGGING:
+        print(f"[+] recieved: {request.method} | to: {url} | targeted to: {ipead_url}")
+    logger.log_main_toml(request.method, request.client.host, request.client.port, url, ipead_url)
 
     diff_ddos = await ddos.packet_into_stuck(request)
     if diff_ddos[0]:
         error_response = f"Ddos attack deteced, {diff_ddos[1]}" + \
                          "Be careful! you just got a strike! 3 strikes and your be banned for life"
-        if _DEBUGGING: print(error_response)
+        if _DEBUGGING:
+            print(error_response)
         ddos_event = SecurityEvent(request)
         ddos_event.add_break(ddos)
-        logger.log_security(ddos_event)
+        logger.log_security_toml(ddos_event)
         punishment_manager.strike_user(request.client.host, "You've been caught doing: Ddos attack")
         return fastapi.Response(content=error_response, status_code=400)
 
