@@ -1,4 +1,3 @@
-import datetime
 from fastapi import Request
 import Securitybreaks.SecurityBreak as SecurityBreak
 from Security.SecurityEvent import SecurityEvent
@@ -31,5 +30,5 @@ class SecurityRuleEngine:
                 event.add_break(rule)
                 print(rule.getName(), check[1])
         if event.is_there_risk():
-            self.logger.log_security(event)
+            self.logger.log_security_toml(event)
         return event

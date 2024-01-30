@@ -1,19 +1,18 @@
-import threading
 import time
 import fastapi
 import hashlib
-import json
+from Securitybreaks.SecurityBreak import SecurityBreak
 
-class Ddos():
+
+class Ddos(SecurityBreak):
     def __init__(self):
-        self._name="Ddos"
+        self._name = "Ddos"
         self._size = 10
         self._timeout = 2  # sec before removing hash from map
 
         self._hash_time_map = {}  # Map to store hashes and timestamps
 
-
-    async def packet_into_stuck(self, request: fastapi.Request):
+    async def checkThreats(self, request: fastapi.Request, clientIp: str):
         """Checks for potential DDoS attack using a hash-time map.
 
         Args:
@@ -22,13 +21,15 @@ class Ddos():
         Returns:
             (bool, str): True and a message if a potential DDoS is detected,
                         False and None otherwise.
+                        @param request:
+                        @param clientIp:
         """
-        
+
         # Calculate the hash of the request payload
         payload_hash = hashlib.sha256(await request.body()).hexdigest()
 
         # Check if the hash is already in the maprequest.body()
-        if (payload_hash in self._hash_time_map):
+        if payload_hash in self._hash_time_map:
             if (time.time() - self._hash_time_map[payload_hash]) <= self._timeout:
                 await self.add_to_map(payload_hash)
                 return True, f"identical payloads"
@@ -38,15 +39,15 @@ class Ddos():
         await self.add_to_map(payload_hash)
         return False, None
 
-    async def add_to_map(self,payload_hash):
+    async def add_to_map(self, payload_hash):
         # Check if the map is full
         if len(self._hash_time_map) >= self._size:
             # If full, remove the least recently used entry (LRU)
             lru_hash = min(self._hash_time_map, key=self._hash_time_map.get)
             del self._hash_time_map[lru_hash]
-        
+
         # Add the hash and current timestamp to the map
         self._hash_time_map[payload_hash] = time.time()
-        
+
     def getName(self):
         return self._name

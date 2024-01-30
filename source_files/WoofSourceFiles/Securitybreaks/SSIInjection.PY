@@ -1,13 +1,13 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
 import re
 import fastapi
-from fastapi import Query
+
 
 class SSIInjection(SecurityBreak):
     def __init__(self):
-     self.name = "SSI Injection"
-    
-    async def checkThreats(self, request: fastapi.Request, clientIp : str):
+        self.name = "SSI Injection"
+
+    async def checkThreats(self, request: fastapi.Request, clientIp: str):
         """Function to check if a request contains SSIi (Server-Side Includes Injection) characters.
 
         Args:
@@ -18,17 +18,17 @@ class SSIInjection(SecurityBreak):
             (Bool): true for threats found false for safe packet
 
         """
-        request_data=request.query_params
+        request_data = request.query_params
         for param_name, param_value in request_data.items():
             if self.is_text_ssii(param_value):
-                return True ,param_value
-        
-        return False ,None
-    
+                return True, param_value
+
+        return False, None
+
     def getName(self):
         return self.name
-    
-    def is_text_ssii(self,text):
+
+    def is_text_ssii(self, text: object) -> object:
         """Function to check if a string contains SSI injection (Server-Side Includes Injection) characters.
 
         Args:

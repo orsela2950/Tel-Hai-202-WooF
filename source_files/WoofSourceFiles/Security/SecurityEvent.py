@@ -7,7 +7,6 @@ from os import path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from Securitybreaks.SecurityBreak import SecurityBreak
-from Ddos import Ddos
 
 
 class SecurityEvent:
@@ -25,7 +24,7 @@ class SecurityEvent:
             )
         )
 
-    def add_break(self, risk: SecurityBreak or Ddos):
+    def add_break(self, risk: SecurityBreak):
         if not any(risk == breaker for breaker in self.SecurityRisks):
             self.SecurityRisks.append(risk)
 

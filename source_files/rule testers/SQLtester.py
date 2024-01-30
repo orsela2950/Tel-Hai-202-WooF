@@ -2,12 +2,14 @@ import requests
 
 import requests
 
+
 def test_sql_injection(url, payload, description):
     try:
         response = requests.post(url, data=payload)
         print(f"{description} - Status Code: {response.status_code} | Content: {response.content}")
     except requests.RequestException as e:
         print(f"Error during {description} request: {e}")
+
 
 if __name__ == "__main__":
     target_url = "http://testwaf202.com"  # Replace with your target URL
