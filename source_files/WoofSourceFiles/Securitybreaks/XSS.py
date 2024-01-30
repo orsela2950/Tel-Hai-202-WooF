@@ -1,18 +1,15 @@
 from typing import List, Any
-
 from Securitybreaks.SecurityBreak import SecurityBreak
-from Securitybreaks.Helper import Helper
 import fastapi
-from urllib.parse import parse_qs
 import os
 
-blocked_keyword_list: list[str] = []
 blocked_content_types = ['text/html', 'application/javascript', 'application/x-shockwave-flash', 'application/xml',
                          'application/x-www-form-urlencoded']
 
 # load the word list:
-with Helper.findFile_Read("XSS_Malicious.txt", "source_files\\WoofSourceFiles\\Securitybreaks") as f:
-    # noinspection PyRedeclaration
+# File usage:
+xss_malicious_list_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'XSS_Malicious.txt')
+with open(xss_malicious_list_path, 'r') as f:
     blocked_keyword_list = f.readlines()
     f.close()
 

@@ -1,10 +1,13 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
-from Securitybreaks.Helper import Helper
 import urllib.parse
 from typing import Tuple
 import fastapi
+import os
 
-helper = Helper()
+
+allowed_urls_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'allowed_urls.txt')
+with open(allowed_urls_path, 'r') as f:
+    allowed_urls = f.readlines()
 
 
 class OpenRedirect(SecurityBreak):
@@ -18,9 +21,6 @@ class OpenRedirect(SecurityBreak):
         @param clientIp:
         @return:
         """
-        with helper.findFile_Read("allowed_urls.txt", "source_files\\WoofSourceFiles\\Securitybreaks") as f:
-            allowed_urls = f.readlines()
-            f.close()
 
         redirect_params = ["url", "uri", "path", "next", "go", "data", "view", "page", "location", "return", "redir",
                            "redirect", "redirect_uri", "redirect_url", "redirect_cookie", "redirect_param"]
