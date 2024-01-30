@@ -150,8 +150,18 @@ async def proxy(path: str, request: fastapi.Request):
 
     malicious_event = await rule_engine.is_request_malicious(request, request.client.host)
     if malicious_event.is_there_risk():
-        error_response = f"Malicious request detected: {malicious_event.return_risks()}" + \
-                         " Be careful! you just got a strike! 3 strikes and your be banned for life"
+        strike_count = strike_counter(request.client.host)
+        error_response = f"Malicious request detected: {malicious_event.return_risks()}"
+        if strike_count == 1:
+            error_response += \
+                            " Be careful! you just got your first strike! 2 more strikes and your be banned for life!"
+        elif strike_count == 2:
+            error_response += \
+                             " Be careful! you just got your second strike! 1 more strikes and your be banned for life!"
+        elif strike_count == 3:
+            error_response += \
+                             " That's it! you just got third strike! YOU ARE BANNED FOR LIFE!"
+
         if _DEBUGGING:
             print(error_response)
         punishment_manager.strike_user(request.client.host, malicious_event.printEventDescription())  # not DOS event

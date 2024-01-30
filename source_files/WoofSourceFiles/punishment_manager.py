@@ -116,6 +116,14 @@ def insert_blacklisted_user(
             preform_insert(conn)
 
 
+def strike_counter(ip_address: str) -> int:
+    with sqlite3.connect(PUNISHMENTS_DB_NAME) as conn:
+        # Count existing non-expired strikes:
+        existing_strikes = conn.execute("SELECT COUNT(*) FROM strikes WHERE ip_address = ? AND expiration_date > ?",
+                                        (ip_address, datetime.now())).fetchone()[0]
+        return existing_strikes
+
+
 def strike_user(
         ip_address: str,
         reason: str = "Not specified"
@@ -139,8 +147,7 @@ def strike_user(
         conn.commit()
 
         # Count existing non-expired strikes:
-        existing_strikes = conn.execute("SELECT COUNT(*) FROM strikes WHERE ip_address = ? AND expiration_date > ?",
-                                        (ip_address, datetime.now())).fetchone()[0]
+        existing_strikes = strike_counter(ip_address)
 
         # Determine expiration based on strike count:
         if existing_strikes == 1:
