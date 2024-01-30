@@ -3,3 +3,8 @@ client_ip = "127.0.0.1"
 host = "127.0.0.1"
 risks = [ "HTTP Host Header Injection",]
 
+timestamp = "2024-01-30 18:17:28"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+

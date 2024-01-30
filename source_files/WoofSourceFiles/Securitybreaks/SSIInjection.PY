@@ -1,7 +1,6 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
 import re
 import fastapi
-from fastapi import Query
 
 
 class SSIInjection(SecurityBreak):

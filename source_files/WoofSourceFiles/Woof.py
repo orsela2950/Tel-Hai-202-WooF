@@ -1,4 +1,3 @@
-import datetime
 import fastapi
 import aiohttp
 import serverInfo
@@ -9,9 +8,9 @@ from punishment_manager import *
 # Custom modules import
 import punishment_manager
 from logger import Logger
-from Ddos import Ddos
 
 # import the security breaks
+from Securitybreaks.Ddos import Ddos as securityRule_Ddos
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
 from Securitybreaks.HPP import HPP as securityRule_HPP
 from Securitybreaks.SSIInjection import SSIInjection as securityRule_SSIInjection
@@ -30,9 +29,9 @@ app = fastapi.FastAPI()
 logger = Logger(_DEBUGGING)
 # Create a SecurityRuleEngine instance
 rule_engine = SecurityRuleEngine(logger)
-ddos = Ddos()
 
 # Add rules to the SecurityRuleEngine instance
+rule_engine.add_rule(securityRule_Ddos())
 rule_engine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
 rule_engine.add_rule(securityRule_HPP())
 rule_engine.add_rule(securityRule_SSIInjection())
@@ -149,23 +148,12 @@ async def proxy(path: str, request: fastapi.Request):
         print(f"[+] received: {request.method} | to: {url} | targeted to: {ip_read_url}")
     logger.log_main_toml(request.method, request.client.host, request.client.port, url, ip_read_url)
 
-    diff_ddos = await ddos.packet_into_stuck(request)
-    if diff_ddos[0]:
-        error_response = f"Ddos attack detected, {diff_ddos[1]}" + \
-                         "Be careful! you just got a strike! 3 strikes and your be banned for life"
-        if _DEBUGGING:
-            print(error_response)
-        ddos_event = SecurityEvent(request)
-        ddos_event.add_break(ddos)
-        logger.log_security_toml(ddos_event)
-        punishment_manager.strike_user(request.client.host, "You've been caught doing: Ddos attack")
-        return fastapi.Response(content=error_response, status_code=400)
-
     malicious_event = await rule_engine.is_request_malicious(request, request.client.host)
     if malicious_event.is_there_risk():
         error_response = f"Malicious request detected: {malicious_event.return_risks()}" + \
-                         "Be careful! you just got a strike! 3 strikes and your be banned for life"
-        if _DEBUGGING: print(error_response)
+                         " Be careful! you just got a strike! 3 strikes and your be banned for life"
+        if _DEBUGGING:
+            print(error_response)
         punishment_manager.strike_user(request.client.host, malicious_event.printEventDescription())  # not DOS event
         return fastapi.Response(content=error_response, status_code=400)
 

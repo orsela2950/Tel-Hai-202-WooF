@@ -22,3 +22,15 @@ client_host = "127.0.0.1:59455"
 url = "http://127.0.0.1/"
 target_url = "http://127.0.0.1:8000/"
 
+timestamp = "2024-01-30 18:17:28"
+request_method = "POST"
+client_host = "127.0.0.1:10387"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+timestamp = "2024-01-30 18:17:28"
+request_method = "POST"
+client_host = "127.0.0.1:10389"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+

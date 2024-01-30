@@ -1,4 +1,3 @@
-import datetime
 from fastapi import Request
 import Securitybreaks.SecurityBreak as SecurityBreak
 from Security.SecurityEvent import SecurityEvent
