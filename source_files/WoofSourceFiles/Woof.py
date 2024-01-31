@@ -172,4 +172,6 @@ async def proxy(path: str, request: fastapi.Request):
 
 if __name__ == "__main__":
     # Run the FastAPI app using uvicorn and specify the host and port to listen on
-    run(app, host="0.0.0.0", port=80)  # , ssl=ssl_context)
+    run(app, port=80)  # , ssl=ssl_context)
+    logger.close_debug_log()
+    print('Ba bye')
