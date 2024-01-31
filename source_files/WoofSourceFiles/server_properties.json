@@ -1,7 +1,17 @@
 {
-  "server_host": "testwaf202.com",
-  "multi_ip": false,
-  "server_ips_ports": [
-    ["127.0.0.1", 8000]
-  ]
+    "server_host": "testwaf202.com",
+    "ip": "127.0.0.1",
+    "port": 8000,
+    "rules": {
+        "DDOS": true,
+        "HostHeaderInjection": true,
+        "HPP": true,
+        "OpenRedirect": true,
+        "SQL_Injection": true,
+        "SSI_Injection": true,
+        "XSS": true,
+        "XST": true
+    }
 }
+
+
