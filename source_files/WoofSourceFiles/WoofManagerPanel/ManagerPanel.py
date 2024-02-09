@@ -1,5 +1,7 @@
-from fastapi import FastAPI, Response, Request, Form
+from fastapi import FastAPI, Request, Form, Response, HTTPException
+from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse, FileResponse, HTMLResponse
 from typing import Annotated
 import fastapi.responses
 from uvicorn import run
@@ -10,21 +12,24 @@ import serverInfoWrite
 # check about middleware for blocking no logged users
 
 # Get program dir for file usage
-program_dir = os.path.dirname(os.path.abspath(__file__))
+program_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pages")
+
+# templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates"))
+
+
 # Create the FastAPI instance
 app = FastAPI()
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    # Add a page list in the main page
-    return Response(content='<h1>Welcome to the woof manager panel!</h1>', status_code=200)
+    # Use RedirectResponse to automatically redirect to /pages/menu.html
+    return RedirectResponse(url="/pages/menu.html", status_code=200)
 
 
-@app.post('/submit-settings')
+@app.post("/submit-settings")
 async def root(request: Request, hostname: Annotated[str, Form()] = None,
                ip: Annotated[str, Form()] = None, port: Annotated[int, Form()] = None):
-    
     new_settings = dict()
 
     if hostname:
@@ -57,7 +62,8 @@ async def root():
     print("[!] cant find favicon")
     return None
 
-app.mount("/", StaticFiles(directory=os.path.join(program_dir, "pages")), name="pages")
+# Serve static files from the "pages" directory
+app.mount("/pages", StaticFiles(directory=program_dir), name="pages")
 
 if __name__ == '__main__':
     run(app, port=20343)

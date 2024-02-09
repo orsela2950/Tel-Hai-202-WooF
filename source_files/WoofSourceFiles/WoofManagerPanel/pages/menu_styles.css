@@ -284,9 +284,17 @@ select {
     width: 100%;
     height: 5em;
     background: hsl(var(--background-secondary-dark));
+    overflow: hidden; /* Hide overflow to prevent large images from stretching */
 }
+
 .navbar-logo > .navbar-item-inner {
     width: calc(5rem - 8px);
+    height: 100%; /* Ensure the item takes full height of the logo */
+}
+
+.navbar-logo > .navbar-item-inner > img {
+    max-width: 100%; /* Adjust the max-width as needed */
+    height: auto;
 }
 .navbar-logo > .navbar-item-inner:hover {
     background-color: transparent;
