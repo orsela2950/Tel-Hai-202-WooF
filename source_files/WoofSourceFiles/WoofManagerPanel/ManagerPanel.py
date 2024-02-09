@@ -14,7 +14,7 @@ import serverInfoWrite
 # Get program dir for file usage
 program_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pages")
 
-# templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates"))
+templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates"))
 
 
 # Create the FastAPI instance
@@ -24,7 +24,7 @@ app = FastAPI()
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     # Use RedirectResponse to automatically redirect to /pages/menu.html
-    return RedirectResponse(url="/pages/menu.html", status_code=200)
+    return RedirectResponse(url="/pages/menu.html", status_code=302)
 
 
 @app.post("/submit-settings")
