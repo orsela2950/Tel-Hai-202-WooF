@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, Form, Response, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 from fastapi.responses import RedirectResponse, FileResponse, HTMLResponse
 from typing import Annotated
 import fastapi.responses
@@ -19,7 +20,7 @@ program_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pages")
 
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates"))
 
-json_path = os.path.join("..", 'server_properties.json')
+json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'server_properties.json')
 # Create the FastAPI instance
 app = FastAPI()
 
@@ -30,7 +31,7 @@ def update_server_json(new_data):
 
     # Update rules based on received data
     existing_data['rules'] = {
-        key: bool(new_data.get(key))  # Use `.get` to handle missing keys
+        key: new_data.get(key) == "on"  # Use `.get` to handle missing keys
         for key in existing_data['rules']
     }
 
@@ -77,21 +78,26 @@ async def root(request: Request):
 
     # Redirect with rules data as query parameter
     rules_string = json.dumps(rules)
-    url = "/pages/rules.html"  # ?rules=" + rules_string
+    url = "/pages/rules.html?rules=" + rules_string
     return RedirectResponse(url=url, status_code=302)
 
 
 @app.get("/check-switches")
 async def check_switches():
     try:
-        with open(json_path, "r") as f:
-            rules_data = json.load(f)
+        # Load current rules from server.json
+        with open(json_path, 'r') as f:
+            existing_data = json.load(f)
+            rules = existing_data['rules']
 
-        rules_dict = {key: bool(value) for key, value in rules_data["rules"].items()}  # Convert strings to booleans
-
-        return json.dumps(rules_dict)
+        # Redirect with rules data as query parameter
+        rules_string = json.dumps(rules)
+        url = "/pages/rules.html?rules=" + rules_string
+        print(url)
+        return JSONResponse(content={"url": url}, status_code=302)
 
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Error fetching switch states: {e}")
 
 

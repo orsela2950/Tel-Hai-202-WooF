@@ -5,11 +5,11 @@
     "rules": {
         "DDOS": true,
         "HostHeaderInjection": false,
-        "HPP": true,
-        "OpenRedirect": false,
-        "SQL_Injection": true,
+        "HPP": false,
+        "OpenRedirect": true,
+        "SQL_Injection": false,
         "SSI_Injection": false,
         "XSS": true,
-        "XST": false
+        "XST": true
     }
 }
