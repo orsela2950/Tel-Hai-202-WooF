@@ -1,3 +1,15 @@
+#rulesForm label {
+    font-size: 40px;
+    vertical-align: up;
+    line-height: 20px; /* Same value as overall height for vertical alignment */
+    margin-top: -2px; /* Adjust this value to position label slightly above checkbox */
+}
+#rulesForm div {
+  display: flex; /* Make them inline-flex boxes */
+  align-items: center; /* Vertically center content */
+  height: 20px; /* Set overall height of the checkbox + label combination */
+  margin-bottom: 15px;
+}
 
 :root {
     --primary: 237, 94%, 81%;
@@ -20,7 +32,7 @@
     /* misc */
     --transition-main: .175, .685, .32;
     /* Fonts */
-    --font-main: "Poppins";
+    --font-main: "Arial";
 }
 
 /* ===========
@@ -34,6 +46,7 @@
 *, *::before, *::after {
     box-sizing: inherit;
 }
+
 html, body {
     margin: 0;
     width: 100%;
@@ -456,4 +469,30 @@ select {
 }
 @media only screen and (max-width: 496px) {
 
+}
+
+input[type='checkbox'] {
+  --s: 40px; /* adjust this to control the size*/
+
+  height: var(--s);
+  aspect-ratio: 2.5;
+  width: auto; /* some browsers need this */
+  border-radius: var(--s);
+  padding: calc(var(--s)/10);
+  cursor: pointer;
+  background:
+    radial-gradient(farthest-side,#15202a 96%,#0000)
+      var(--_p,0%)/var(--s) content-box no-repeat,
+    var(--_c,#ff7a7a);
+  box-sizing: content-box;
+  transform-origin: calc(3*var(--s)/5) 50%;
+  transition: transform cubic-bezier(0,300,1,300) .5s,background .3s .1s ease-in;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+input[type='checkbox']:checked {
+  --_c: #85ff7a;
+  --_p: 100%;
+  transform-origin: calc(100% - 3*var(--s)/5) 50%;
 }

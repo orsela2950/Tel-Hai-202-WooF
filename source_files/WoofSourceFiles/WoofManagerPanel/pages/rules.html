@@ -51,43 +51,51 @@
     </li>
   </ul>
 </nav>
-  <div class="container">
-    <h1>Rules Settings</h1>
-   <form id="rulesForm" action="/submit-rules" method="POST">
-
-      <input type="checkbox" id="DDOS" name="DDOS">
-      <label for="DDOS">DDOS</label>
-        <br>
+ <div class="container">
+  <h1>Rules Settings</h1>
+  <form id="rulesForm" action="/submit-rules" method="POST">
+      <div>
+        <input type="checkbox" id="DDOS" name="DDOS">
+        <label for="DDOS">DDOS</label>
+      </div>
+    <br>
+    <div>
       <input type="checkbox" id="HostHeaderInjection" name="HostHeaderInjection">
       <label for="HostHeaderInjection">HostHeaderInjection</label>
-        <br>
-
+    </div>
+    <br>
+    <div>
       <input type="checkbox" id="HPP" name="HPP">
       <label for="HPP">HPP</label>
-        <br>
-
+    </div>
+    <br>
+    <div>
       <input type="checkbox" id="OpenRedirect" name="OpenRedirect">
       <label for="OpenRedirect">OpenRedirect</label>
-        <br>
-
+    </div>
+    <br>
+    <div>
       <input type="checkbox" id="SQL_Injection" name="SQL_Injection">
       <label for="SQL_Injection">SQL_Injection</label>
-        <br>
-
+    </div>
+    <br>
+    <div>
       <input type="checkbox" id="SSI_Injection" name="SSI_Injection">
       <label for="SSI_Injection">SSI_Injection</label>
-        <br>
-
+    </div>
+    <br>
+    <div>
       <input type="checkbox" id="XSS" name="XSS">
       <label for="XSS">XSS</label>
-        <br>
-
+    </div>
+    <br>
+    <div>
       <input type="checkbox" id="XST" name="XST">
       <label for="XST">XST</label>
-        <br>
-
-      <button type="submit">Submit</button>
-    </form>
+    </div>
+    <br>
+    <button type="submit">Submit</button>
+  </form>
 </div>
 <script>
      // Function to parse the URL parameter and set checkbox states
