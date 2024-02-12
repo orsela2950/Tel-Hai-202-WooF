@@ -1,6 +1,7 @@
 import fastapi
 import aiohttp
 import serverInfo
+import json
 from uvicorn import run
 from SecurityRuleEngine import SecurityRuleEngine
 from punishment_manager import *
@@ -30,15 +31,27 @@ logger = Logger(_DEBUGGING)
 # Create a SecurityRuleEngine instance
 rule_engine = SecurityRuleEngine(logger)
 
-# Add rules to the SecurityRuleEngine instance
-rule_engine.add_rule(securityRule_Ddos())
-rule_engine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
-rule_engine.add_rule(securityRule_HPP())
-rule_engine.add_rule(securityRule_SSIInjection())
-rule_engine.add_rule(securityRule_OpenRedirect())
-rule_engine.add_rule(securityRule_SQLInjection())
-rule_engine.add_rule(securityRule_XSS())
-rule_engine.add_rule(securityRule_XST())
+
+def add_rules_based_on_properties(ruleEngine: SecurityRuleEngine, rules_properties: json):
+    """
+    Add rules to the SecurityRuleEngine instance based on the rules defined in server_properties.
+    """
+    if rules_properties.get("DDOS", False):
+        ruleEngine.add_rule(securityRule_Ddos())
+    if rules_properties.get("HostHeaderInjection", False):
+        ruleEngine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
+    if rules_properties.get("HPP", False):
+        ruleEngine.add_rule(securityRule_HPP())
+    if rules_properties.get("SSI_Injection", False):
+        ruleEngine.add_rule(securityRule_SSIInjection())
+    if rules_properties.get("OpenRedirect", False):
+        ruleEngine.add_rule(securityRule_OpenRedirect())
+    if rules_properties.get("SQL_Injection", False):
+        ruleEngine.add_rule(securityRule_SQLInjection())
+    if rules_properties.get("XSS", False):
+        ruleEngine.add_rule(securityRule_XSS())
+    if rules_properties.get("XST", False):
+        ruleEngine.add_rule(securityRule_XST())
 
 
 def load_ban_message(ip, reason, expiration, source):
@@ -154,13 +167,13 @@ async def proxy(path: str, request: fastapi.Request):
         error_response = f"Malicious request detected: {malicious_event.return_risks()}"
         if strike_count == 1:
             error_response += \
-                            " Be careful! you just got your first strike! 2 more strikes and your be banned for life!"
+                " Be careful! you just got your first strike! 2 more strikes and your be banned for life!"
         elif strike_count == 2:
             error_response += \
-                             " Be careful! you just got your second strike! 1 more strikes and your be banned for life!"
+                " Be careful! you just got your second strike! 1 more strikes and your be banned for life!"
         elif strike_count == 3:
             error_response += \
-                             " That's it! you just got third strike! YOU ARE BANNED FOR LIFE!"
+                " That's it! you just got third strike! YOU ARE BANNED FOR LIFE!"
 
         if _DEBUGGING:
             print(error_response)
@@ -171,6 +184,11 @@ async def proxy(path: str, request: fastapi.Request):
 
 
 if __name__ == "__main__":
+    # Load current rules from server_properties.json
+    with open('server_properties.json', 'r') as f:
+        server_properties = json.load(f)
+    # Add rules based on the properties in server_properties.json
+    add_rules_based_on_properties(rule_engine, server_properties.get("rules", {}))
     # Run the FastAPI app using uvicorn and specify the host and port to listen on
     run(app, port=80)  # , ssl=ssl_context)
     logger.close_debug_log()
