@@ -1,44 +1,143 @@
 <!DOCTYPE html>
-<html>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<html lang="en">
 <head>
-<title>Waf Manager Panel</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waf Manager Panel</title>
+    <link rel="stylesheet" href="menu_styles.css">
 </head>
 <body>
-  <h1>Rules Settings</h1>
-  <form action="/submit-rules" method="POST">
+ <nav id="navbar">
+  <ul class="navbar-items flexbox-col">
+    <li class="navbar-logo flexbox-left">
+      <a class="navbar-item-inner flexbox" href="/pages/menu.html">
+        <img src="/pages/WoofLogoTrimSmall.jpeg" >
+      </a>
+    </li>
+    <li class="navbar-item flexbox-left">
+      <a class="navbar-item-inner flexbox-left" href="/pages/settings.html">
+        <div class="navbar-item-inner-icon-wrapper flexbox">
+          <ion-icon name="settings-outline"></ion-icon>
+        </div>
+        <span class="link-text">Settings</span>
+      </a>
+    </li>
+    <li class="navbar-item flexbox-left">
+      <a class="navbar-item-inner flexbox-left" href="/pages/logs.html">
+        <div class="navbar-item-inner-icon-wrapper flexbox">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </div>
+        <span class="link-text">Logs</span>
+      </a>
+    </li>
+    <li class="navbar-item flexbox-left">
+      <a class="navbar-item-inner flexbox-left" href="/pages/security_logs.html">
+        <div class="navbar-item-inner-icon-wrapper flexbox">
+          <ion-icon name="document-lock-outline"></ion-icon>
+        </div>
+        <span class="link-text">Security Logs</span>
+      </a>
+    </li>
+    <li class="navbar-item flexbox-left">
+      <a class="navbar-item-inner flexbox-left" href="/pages/rules.html">
+        <div class="navbar-item-inner-icon-wrapper flexbox">
+          <ion-icon name="briefcase-outline"></ion-icon>
+        </div>
+        <span class="link-text">Rules</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+  <div class="container">
+    <h1>Rules Settings</h1>
+   <form id="rulesForm" action="/submit-rules" method="POST">
 
-    <input type="checkbox" id="DDOS" name="DDOS">
-    <label for="DDOS">DDOS</label>
-      <br>
-    <input type="checkbox" id="HostHeaderInjection" name="HostHeaderInjection">
-    <label for="HostHeaderInjection">HostHeaderInjection</label>
-      <br>
+      <input type="checkbox" id="DDOS" name="DDOS">
+      <label for="DDOS">DDOS</label>
+        <br>
+      <input type="checkbox" id="HostHeaderInjection" name="HostHeaderInjection">
+      <label for="HostHeaderInjection">HostHeaderInjection</label>
+        <br>
 
-    <input type="checkbox" id="HPP" name="HPP">
-    <label for="HPP">HPP</label>
-      <br>
+      <input type="checkbox" id="HPP" name="HPP">
+      <label for="HPP">HPP</label>
+        <br>
 
-    <input type="checkbox" id="OpenRedirect" name="OpenRedirect">
-    <label for="OpenRedirect">OpenRedirect</label>
-      <br>
+      <input type="checkbox" id="OpenRedirect" name="OpenRedirect">
+      <label for="OpenRedirect">OpenRedirect</label>
+        <br>
 
-    <input type="checkbox" id="SQL_Injection" name="SQL_Injection">
-    <label for="SQL_Injection">SQL_Injection</label>
-      <br>
+      <input type="checkbox" id="SQL_Injection" name="SQL_Injection">
+      <label for="SQL_Injection">SQL_Injection</label>
+        <br>
 
-    <input type="checkbox" id="SSI_Injection" name="SSI_Injection">
-    <label for="SSI_Injection">SSI_Injection</label>
-      <br>
+      <input type="checkbox" id="SSI_Injection" name="SSI_Injection">
+      <label for="SSI_Injection">SSI_Injection</label>
+        <br>
 
-    <input type="checkbox" id="XSS" name="XSS">
-    <label for="XSS">XSS</label>
-      <br>
+      <input type="checkbox" id="XSS" name="XSS">
+      <label for="XSS">XSS</label>
+        <br>
 
-    <input type="checkbox" id="XST" name="XST">
-    <label for="XST">XST</label>
-      <br>
+      <input type="checkbox" id="XST" name="XST">
+      <label for="XST">XST</label>
+        <br>
 
-    <button type="submit">Submit</button>
-  </form>
-</body>
+      <button type="submit">Submit</button>
+    </form>
+</div>
+<script>
+     // Function to parse the URL parameter and set checkbox states
+        function setCheckboxStatesFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const rulesData = JSON.parse(urlParams.get('rules'));
+
+            // Use rulesData to set checkbox states
+            for (const key in rulesData) {
+                const checkbox = document.getElementById(key);
+                if (checkbox) {
+                    checkbox.checked = rulesData[key];
+                }
+            }
+        }
+
+        // Call the function when the page loads
+        setCheckboxStatesFromURL();
+        function submitForm() {
+          const form = document.getElementById('rulesForm');
+          const formObject = {};
+
+          // **Place this code block here:**
+          for (const element of form.elements) {
+            if (element.type === 'checkbox') {
+              formObject[element.name] = element.checked;
+            }
+          }
+
+          fetch('/submit-rules', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formObject),
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Server response:', data);
+            // Handle the server response as needed
+          })
+          .catch(error => {
+            console.error('Error during fetch:', error);
+          });
+        }
+  </script>
+  </body>
 </html>

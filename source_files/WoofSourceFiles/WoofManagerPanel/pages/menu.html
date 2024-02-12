@@ -42,7 +42,7 @@
       </a>
     </li>
     <li class="navbar-item flexbox-left">
-      <a class="navbar-item-inner flexbox-left" href="/pages/rules.html">
+      <a class="navbar-item-inner flexbox-left" href="javascript:void(0);" onclick="fetchRules()">
         <div class="navbar-item-inner-icon-wrapper flexbox">
           <ion-icon name="briefcase-outline"></ion-icon>
         </div>
@@ -51,7 +51,21 @@
     </li>
   </ul>
 </nav>
+<script>
+  async function fetchRules() {
+      try {
+          const response = await fetch('/check-switches');
+          const rulesData = await response.text(); // Modified to receive text response
 
+          // Redirect to rules.html with parsed rules data as query parameter
+          const rulesQuery = new URLSearchParams({ rules: rulesData });
+          window.location.href = '/pages/rules.html?' + rulesQuery.toString();
+      } catch (error) {
+          console.error('Error fetching rules:', error);
+          // Handle the error gracefully, e.g., display an error message to the user
+      }
+  }
+</script>
 <!-- Main -->
 <main id="main" class="flexbox-col">
   <h2>This is Or and Dvir Proj</h2>
