@@ -4,11 +4,11 @@
     "port": 8000,
     "rules": {
         "DDOS": true,
-        "HostHeaderInjection": false,
-        "HPP": false,
+        "HostHeaderInjection": true,
+        "HPP": true,
         "OpenRedirect": true,
-        "SQL_Injection": false,
-        "SSI_Injection": false,
+        "SQL_Injection": true,
+        "SSI_Injection": true,
         "XSS": true,
         "XST": true
     }

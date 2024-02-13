@@ -496,3 +496,42 @@ input[type='checkbox']:checked {
   --_p: 100%;
   transform-origin: calc(100% - 3*var(--s)/5) 50%;
 }
+.text-block {
+  border: 2px solid hsl(var(--black)); /* Set the border to black */
+  border-radius: 8px; /* Add border-radius for rounded corners */
+  padding: 20px; /* Add padding as needed */
+  margin: 20px; /* Add margin as needed */
+}
+
+.text-block label {
+  font-size: 40px;
+  color: hsl(var(--black)); /* Set text color to black */
+}
+
+.text-block input,
+.text-block button {
+  font-size: var(--paragraph);
+  border: 2px solid hsl(var(--black)); /* Set the border to black */
+  border-radius: 8px; /* Add border-radius for rounded corners */
+  padding: .8em 1.2em;
+  margin-bottom: 15px;
+  outline: none;
+}
+
+.text-block input:hover,
+.text-block input:focus,
+.text-block button:hover,
+.text-block button:focus {
+  box-shadow:
+    0 0 0 2px hsl(var(--black)),
+    0 0 0 3px hsl(var(--white));
+  border: 2px solid transparent;
+}
+
+.text-block select {
+  font-size: var(--paragraph);
+  border: 1px solid hsl(var(--black)); /* Set the border to black */
+  border-radius: 8px; /* Add border-radius for rounded corners */
+  padding: .8em 1.2em;
+  outline: none;
+}

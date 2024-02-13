@@ -18,7 +18,7 @@
       </a>
     </li>
     <li class="navbar-item flexbox-left">
-      <a class="navbar-item-inner flexbox-left" href="/pages/settings.html">
+      <a class="navbar-item-inner flexbox-left" onclick="fetchSettings()">
         <div class="navbar-item-inner-icon-wrapper flexbox">
           <ion-icon name="settings-outline"></ion-icon>
         </div>
@@ -114,38 +114,6 @@
 
         // Call the function when the page loads
         setCheckboxStatesFromURL();
-        function submitForm() {
-          const form = document.getElementById('rulesForm');
-          const formObject = {};
-
-          // **Place this code block here:**
-          for (const element of form.elements) {
-            if (element.type === 'checkbox') {
-              formObject[element.name] = element.checked;
-            }
-          }
-
-          fetch('/submit-rules', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formObject),
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then(data => {
-            console.log('Server response:', data);
-            // Handle the server response as needed
-          })
-          .catch(error => {
-            console.error('Error during fetch:', error);
-          });
-        }
     async function fetchRules() {
       try {
           const response = await fetch('/check-switches');
@@ -155,6 +123,15 @@
           // Handle the error gracefully, e.g., display an error message to the user
       }
   }
+  async function fetchSettings() {
+          try {
+              const response = await fetch('/check-settings');
+              window.location.href = (await response.json()).url;
+          } catch (error) {
+              console.error('Error fetching rules:', error);
+              // Handle the error gracefully, e.g., display an error message to the user
+          }
+      }
   </script>
   </body>
 </html>
