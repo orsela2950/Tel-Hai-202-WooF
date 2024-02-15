@@ -3,12 +3,9 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi.responses import RedirectResponse, FileResponse, HTMLResponse
-from typing import Annotated
 import fastapi.responses
 from uvicorn import run
 import os
-import sys
-from os import path
 import json
 # Import custom modules
 import serverInfoWrite

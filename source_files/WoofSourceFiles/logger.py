@@ -31,7 +31,7 @@ class Logger:
         self._debugging = debugging
 
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        self.log_dir = os.path.join(current_dir, "logs")
+        self.log_dir = os.path.join(current_dir, "WoofManagerPanel\\pages\\Logs\\")
 
         # Ensure the logs directory exists
         os.makedirs(self.log_dir, exist_ok=True)
