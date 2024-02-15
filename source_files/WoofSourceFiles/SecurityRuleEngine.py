@@ -18,6 +18,9 @@ class SecurityRuleEngine:
     def add_rule(self, rule: SecurityBreak):
         self.rules.append(rule)
 
+    def clear_rules(self):
+        self.rules.clear()
+
     async def is_request_malicious(self, request: Request, client_ip: str):
         request_url = request.url.path
         event = SecurityEvent(request)

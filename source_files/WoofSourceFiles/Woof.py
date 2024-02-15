@@ -36,6 +36,9 @@ def add_rules_based_on_properties(ruleEngine: SecurityRuleEngine, rules_properti
     """
     Add rules to the SecurityRuleEngine instance based on the rules defined in server_properties.
     """
+
+    # clear current rules before using
+    ruleEngine.clear_rules()
     if rules_properties.get("DDOS", False):
         ruleEngine.add_rule(securityRule_Ddos())
     if rules_properties.get("HostHeaderInjection", False):
@@ -137,6 +140,13 @@ async def favicon(request: fastapi.Request):
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
 async def proxy(path: str, request: fastapi.Request):
     """Handles a request, checking for IP bans and returning appropriate responses."""
+
+    # Load current rules from server_properties.json
+    with open('server_properties.json', 'r') as f:
+        server_properties = json.load(f)
+    # Add rules based on the properties in server_properties.json
+    add_rules_based_on_properties(rule_engine, server_properties.get("rules", {}))
+
     check_ban = check_ip_ban(request.client.host)
     if check_ban[0]:  # If IP is banned
         try:
@@ -184,11 +194,6 @@ async def proxy(path: str, request: fastapi.Request):
 
 
 if __name__ == "__main__":
-    # Load current rules from server_properties.json
-    with open('server_properties.json', 'r') as f:
-        server_properties = json.load(f)
-    # Add rules based on the properties in server_properties.json
-    add_rules_based_on_properties(rule_engine, server_properties.get("rules", {}))
     # Run the FastAPI app using uvicorn and specify the host and port to listen on
     run(app, port=80)  # , ssl=ssl_context)
     logger.close_debug_log()
