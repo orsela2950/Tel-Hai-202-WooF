@@ -152,5 +152,7 @@ async def root():
 # Serve static files from the "pages" directory
 app.mount("/pages", StaticFiles(directory=program_dir), name="pages")
 
+#main function
 if __name__ == '__main__':
     run(app, port=20343)
+
