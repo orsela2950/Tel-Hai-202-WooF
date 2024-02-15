@@ -5,7 +5,7 @@ from typing import Dict, Any
 
 # File usage:
 current_dir = os.path.dirname(os.path.realpath(__file__))
-server_properties_dir = os.path.join(current_dir, '..')
+server_properties_dir = os.path.join(current_dir, '..', 'WoofSourceFiles')
 
 
 def set_json_argument(new_args_dict: Dict[str, Any]):
@@ -35,5 +35,6 @@ def set_json_argument(new_args_dict: Dict[str, Any]):
 
 
 if __name__ == '__main__':
+    # tests
     newdict = {'ip': 'new ip xd'}
     set_json_argument(newdict)

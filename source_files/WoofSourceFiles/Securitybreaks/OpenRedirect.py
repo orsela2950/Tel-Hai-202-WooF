@@ -1,6 +1,5 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
 import urllib.parse
-from typing import Tuple
 import fastapi
 import os
 

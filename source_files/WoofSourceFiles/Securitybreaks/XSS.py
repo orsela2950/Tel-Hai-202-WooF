@@ -1,4 +1,3 @@
-from typing import List, Any
 from Securitybreaks.SecurityBreak import SecurityBreak
 import fastapi
 import os
