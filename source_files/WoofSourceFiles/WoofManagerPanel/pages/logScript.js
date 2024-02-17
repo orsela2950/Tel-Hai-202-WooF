@@ -28,16 +28,23 @@ async function fetchAndDisplayTOML() {
 // Function to display logs in a table
 function displayLogsTable(parsedData) {
   // Assuming parsedData is your JSON object with the "logs" key
-  const logTableBody = document.getElementById('log-table-body');
+  const logTableBody = document.getElementById('logTableBody');
+
+  if (!logTableBody) {
+    console.error('Error: logTableBody element not found.');
+    return;
+  }
 
   parsedData.logs.forEach(logEntry => {
-    const row = document.createElement('tr');
+    const row = document.createElement('li');
+    row.className = 'table-row';
 
     // Assuming you want to display certain properties in the table
     const propertiesToDisplay = ['timestamp', 'request_method', 'client_host', 'url', 'target_url'];
 
     propertiesToDisplay.forEach(prop => {
-      const cell = document.createElement('td');
+      const cell = document.createElement('div');
+      cell.className = `col col-${propertiesToDisplay.indexOf(prop) + 1}`;
       cell.textContent = logEntry[prop];
       row.appendChild(cell);
     });

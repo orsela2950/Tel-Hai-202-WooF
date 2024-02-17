@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request Log Viewer</title>
   <script src="bundled-toml.js"></script>
-  <script type="module" src="logScript.js"></script>
+  <script type="module" src="logScript.js" defer></script>
   <link rel="stylesheet" href="menu_styles.css">
 </head>
 <body>
@@ -52,24 +52,20 @@
       </li>
     </ul>
   </nav>
-  <div class="container">
-    <h1>Request Log Viewer</h1>
-    <div class="log-table">
-      <table class="log-table">
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Request Method</th>
-              <th>Client Host</th>
-              <th>URL</th>
-              <th>Target URL</th>
-            </tr>
-          </thead>
-        <tbody id="log-table-body">
-      </table>
-    </div>
-    <div class="pagination"></div>
-    <div id="tomlData"></div>
-  </div>
+
+<div class="container" id="mainTableContainer">
+  <h2>main logs table</h2>
+  <ul class="responsive-table" id="logTableBody">
+    <li class="table-header">
+      <div class="col col-1">Timestamp</div>
+      <div class="col col-2" data-label="Request Method">Request Method</div>
+      <div class="col col-3" data-label="Client Host">Client Host</div>
+      <div class="col col-4" data-label="URL">URL</div>
+      <div class="col col-5" data-label="Target URL">Target URL</div>
+    </li>
+    <!-- Table content will be dynamically added here using JavaScript -->
+  </ul>
+</div>
+
 </body>
 </html>

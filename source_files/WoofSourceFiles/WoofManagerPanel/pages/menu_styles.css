@@ -11,6 +11,112 @@
   margin-bottom: 15px;
 }
 
+#mainTableContainer {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#mainTableContainer h2 {
+  font-size: 26px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+#mainTableContainer h2 small {
+  font-size: 0.5em;
+}
+
+#mainTableContainer .responsive-table li {
+  border-radius: 3px;
+  padding: 25px 30px;
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  gap: 20px; /* Adjust the gap as needed */
+  margin-bottom: 25px;
+}
+
+#mainTableContainer .responsive-table .table-header {
+  background-color: #95A5A6;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 25px 30px 15px; /* Adjust the padding as needed */
+  margin-bottom: 10px; /* Add margin-bottom for space between headers */
+}
+
+#mainTableContainer .responsive-table .table-row {
+  background-color: #ffffff;
+  box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+}
+
+#mainTableContainer .responsive-table .table-row {
+  transition: height 0.3s ease-in-out; /* Add a smooth transition effect */
+}
+
+#mainTableContainer .responsive-table .table-row.expanded {
+  height: 80px; /* Set the desired expanded height */
+}
+
+@media all and (max-width: 767px) {
+  /* Add the styles for small screens when the row is expanded */
+}
+
+#mainTableContainer .responsive-table .col-1,
+#mainTableContainer .responsive-table .col-2,
+#mainTableContainer .responsive-table .col-3,
+#mainTableContainer .responsive-table .col-4,
+#mainTableContainer .responsive-table .col-5 {
+}
+
+#mainTableContainer .responsive-table .col-1:before,
+#mainTableContainer .responsive-table .col-2:before,
+#mainTableContainer .responsive-table .col-3:before,
+#mainTableContainer .responsive-table .col-4:before,
+#mainTableContainer .responsive-table .col-5:before{}
+
+@media all and (max-width: 767px) {
+  #mainTableContainer .responsive-table .col-1,
+  #mainTableContainer .responsive-table .col-2,
+  #mainTableContainer .responsive-table .col-3,
+  #mainTableContainer .responsive-table .col-4,
+  #mainTableContainer .responsive-table .col-5 {
+    flex-basis: 100%;
+  }
+  #mainTableContainer .responsive-table .table-header {
+  background-color: #95A5A6;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 25px 30px; /* Adjust the padding as needed */
+    }
+
+  #mainTableContainer .responsive-table .table-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #mainTableContainer li {
+    display: block;
+  }
+
+  #mainTableContainer .responsive-table .col {
+    flex-basis: 100%;
+    display: flex;
+    padding: 10px 0;
+  }
+
+  #mainTableContainer .responsive-table .col:before {
+    color: #6C7A89;
+    padding-right: 10px;
+    content: attr(data-label);
+    flex-basis: 50%;
+    text-align: right;
+  }
+}
+
 :root {
     --primary: 237, 94%, 81%;
     --background: 266, 16%, 92%;
@@ -534,16 +640,4 @@ input[type='checkbox']:checked {
   border-radius: 8px; /* Add border-radius for rounded corners */
   padding: .8em 1.2em;
   outline: none;
-}
-
-.log-table th {
-  padding: 30px; /* Adjust the padding as needed */
-  background-color: hsl(var(--background-secondary-dark)); /* Set background color */
-  color: hsl(var(--white)); /* Set text color */
-}
-
-/* Add some spacing between table rows */
-.log-table td,
-.log-table th {
-  padding: 30px; /* Adjust the padding as needed */
 }
