@@ -117,6 +117,10 @@
   }
 }
 
+
+/* ===========
+    Variabels
+   =========== */
 :root {
     --primary: 237, 94%, 81%;
     --background: 266, 16%, 92%;
@@ -140,14 +144,6 @@
     /* Fonts */
     --font-main: "Arial";
 }
-
-/* ===========
-    Variabels
-   =========== */
-
-/* ===============
-    Global Styles
-   =============== */
 
 *, *::before, *::after {
     box-sizing: inherit;
@@ -181,11 +177,11 @@ html, body {
   margin-bottom: 200px; /* Adjust the margin as needed */
 }
 
-
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
 }
+
 /* Font Size */
 h1 {
     font-size: var(--heading-large);
@@ -298,14 +294,6 @@ select {
     font-size: var(--paragraph);
     outline: none;
 }
-
-/* =========
-    Classes
-   ========= */
-
-/* ================
-    Global classes
-   ================ */
 
 /* =========
     Flexbox

@@ -1,0 +1,226 @@
+/* =========
+     Rules
+   ========= */
+#rulesForm label {
+    font-size: 40px;
+    vertical-align: up;
+    line-height: 20px; /* Same value as overall height for vertical alignment */
+    margin-top: -2px; /* Adjust this value to position label slightly above checkbox */
+}
+#rulesForm div {
+  display: flex; /* Make them inline-flex boxes */
+  align-items: center; /* Vertically center content */
+  height: 20px; /* Set overall height of the checkbox + label combination */
+  margin-bottom: 15px;
+}
+
+/* =========
+     Logs
+   ========= */
+#mainTableContainer {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#mainTableContainer h2 {
+  font-size: 26px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+#mainTableContainer h2 small {
+  font-size: 0.5em;
+}
+
+#mainTableContainer .responsive-table li {
+  border-radius: 3px;
+  padding: 25px 30px;
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  gap: 20px; /* Adjust the gap as needed */
+  margin-bottom: 25px;
+}
+
+#mainTableContainer .responsive-table .table-header {
+  background-color: #95A5A6;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 25px 30px 15px; /* Adjust the padding as needed */
+  margin-bottom: 10px; /* Add margin-bottom for space between headers */
+}
+
+#mainTableContainer .responsive-table .table-row {
+  background-color: #ffffff;
+  box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+}
+
+#mainTableContainer .responsive-table .table-row {
+  transition: height 0.3s ease-in-out; /* Add a smooth transition effect */
+}
+
+#mainTableContainer .responsive-table .table-row.expanded {
+  height: 80px; /* Set the desired expanded height */
+}
+
+@media all and (max-width: 767px) {
+  /* Add the styles for small screens when the row is expanded */
+}
+
+#mainTableContainer .responsive-table .col-1,
+#mainTableContainer .responsive-table .col-2,
+#mainTableContainer .responsive-table .col-3,
+#mainTableContainer .responsive-table .col-4,
+#mainTableContainer .responsive-table .col-5 {
+}
+
+#mainTableContainer .responsive-table .col-1:before,
+#mainTableContainer .responsive-table .col-2:before,
+#mainTableContainer .responsive-table .col-3:before,
+#mainTableContainer .responsive-table .col-4:before,
+#mainTableContainer .responsive-table .col-5:before{}
+
+@media all and (max-width: 767px) {
+  #mainTableContainer .responsive-table .col-1,
+  #mainTableContainer .responsive-table .col-2,
+  #mainTableContainer .responsive-table .col-3,
+  #mainTableContainer .responsive-table .col-4,
+  #mainTableContainer .responsive-table .col-5 {
+    flex-basis: 100%;
+  }
+  #mainTableContainer .responsive-table .table-header {
+  background-color: #95A5A6;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 25px 30px; /* Adjust the padding as needed */
+    }
+
+  #mainTableContainer .responsive-table .table-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #mainTableContainer li {
+    display: block;
+  }
+
+  #mainTableContainer .responsive-table .col {
+    flex-basis: 100%;
+    display: flex;
+    padding: 10px 0;
+  }
+
+  #mainTableContainer .responsive-table .col:before {
+    color: #6C7A89;
+    padding-right: 10px;
+    content: attr(data-label);
+    flex-basis: 50%;
+    text-align: right;
+  }
+}
+
+/* =========
+    Font
+   ========= */
+html {
+  font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+
+/* =========
+    Button
+   ========= */
+/*  from: https://getcssscan.com/css-buttons-examples*/
+button {
+  appearance: none;
+  background-color: #000000;
+  border: 2px solid #1A1A1A;
+  border-radius: 15px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  margin: 0;
+  min-height: 60px;
+  min-width: 0;
+  outline: none;
+  padding: 16px 24px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  will-change: transform;
+}
+
+button:disabled {
+  pointer-events: none;
+}
+
+button:hover {
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+
+button:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+/* =========
+  Text input
+   ========= */
+/*  from: https://uiverse.io/Praashoo7/tame-sloth-39  */
+input[type="text"], input[type="number"] {
+  border: none;
+  outline: none;
+  border-radius: 15px;
+  padding: 1em;
+  background-color: #ccc;
+  box-shadow: inset 2px 5px 10px rgba(0,0,0,0.3);
+  transition: 300ms ease-in-out;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+  background-color: white;
+  transform: scale(1.05);
+  box-shadow: 13px 13px 100px #969696,
+             -13px -13px 100px #ffffff;
+}
+
+/* ======
+  checkbox
+   ====== */
+input[type='checkbox'] {
+  --s: 40px; /* adjust this to control the size*/
+
+  height: var(--s);
+  aspect-ratio: 2.5;
+  width: auto; /* some browsers need this */
+  border-radius: var(--s);
+  padding: calc(var(--s)/10);
+  cursor: pointer;
+  background:
+    radial-gradient(farthest-side,#fff 96%,#0000)
+      var(--_p,0%)/var(--s) content-box no-repeat,
+    var(--_c,#ccc);
+  box-sizing: content-box;
+  transform-origin: calc(3*var(--s)/5) 50%;
+  transition: transform cubic-bezier(0,300,1,300) .5s,background .3s .1s ease-in;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+input[type='checkbox']:checked {
+  --_c: #66bb6a;
+  --_p: 100%;
+  transform-origin: calc(100% - 3*var(--s)/5) 50%;
+}
