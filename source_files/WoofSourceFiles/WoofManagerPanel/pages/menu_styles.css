@@ -535,3 +535,15 @@ input[type='checkbox']:checked {
   padding: .8em 1.2em;
   outline: none;
 }
+
+.log-table th {
+  padding: 30px; /* Adjust the padding as needed */
+  background-color: hsl(var(--background-secondary-dark)); /* Set background color */
+  color: hsl(var(--white)); /* Set text color */
+}
+
+/* Add some spacing between table rows */
+.log-table td,
+.log-table th {
+  padding: 30px; /* Adjust the padding as needed */
+}
