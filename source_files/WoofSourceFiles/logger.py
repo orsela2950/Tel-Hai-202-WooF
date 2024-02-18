@@ -1,11 +1,9 @@
-import os
+from os.path import join, abspath, dirname
+from os import makedirs
 import time
 from Security.SecurityEvent import SecurityEvent
 import toml
-import uuid
 
-
-# uuid.uuid4().hex # 32 bit uuidfor logging
 
 class Logger:
     """
@@ -30,18 +28,17 @@ class Logger:
         # Set the debugging field
         self._debugging = debugging
 
-        current_dir = os.path.dirname(os.path.realpath(__file__))
-        self.log_dir = os.path.join(current_dir, "WoofManagerPanel\\pages\\Logs\\")
+        self.log_dir = join(abspath(dirname(__file__)), '..', 'logs')
 
         # Ensure the logs directory exists
-        os.makedirs(self.log_dir, exist_ok=True)
+        makedirs(self.log_dir, exist_ok=True)
 
         # Create file handles for main and security logs (closed after each use)
-        self.main_log_file = os.path.join(self.log_dir, "main.toml")
-        self.security_log_file = os.path.join(self.log_dir, "security.toml")
+        self.main_log_file = join(self.log_dir, "main.toml")
+        self.security_log_file = join(self.log_dir, "security.toml")
 
         # Keep debug log file open for continuous logging
-        self.debug_log_file = open(os.path.join(self.log_dir, "debug.toml"), "a")
+        self.debug_log_file = open(join(self.log_dir, "debug.toml"), "a")
 
     def log_main_toml(self, request_method: str, client_host: str, port: int, url: str, target_url: str):
         """
@@ -86,7 +83,7 @@ class Logger:
 
         # Append the log entry within the [[logs]] section
         with open(self.security_log_file, "a") as f:
-            f.write(toml.dumps({"logs": [log_entry]}) + '\n')
+            f.write(toml.dumps(log_entry) + '\n')
 
     def log_debug_toml(self, message: str):
         """
@@ -102,7 +99,7 @@ class Logger:
         }
 
         with open(self.debug_log_file.name, "a") as f:
-            f.write(toml.dumps(log_entry) + '\n')
+            f.write(toml.dumps({"logs": [log_entry]}) + '\n')
 
     def close_debug_log(self):
         """Closes the "debug.log" file to ensure proper resource management."""
