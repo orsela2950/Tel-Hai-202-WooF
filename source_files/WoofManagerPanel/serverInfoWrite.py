@@ -5,7 +5,7 @@ from typing import Dict, Any
 
 # File usage:
 current_dir = os.path.dirname(os.path.realpath(__file__))
-server_properties_dir = os.path.join(current_dir, '..')
+server_properties_dir = os.path.join(current_dir, '..', 'WoofSourceFiles')
 server_properties_name = 'server_properties.json'
 
 def set_settings_json_argument(new_args_dict: Dict[str, Any]):

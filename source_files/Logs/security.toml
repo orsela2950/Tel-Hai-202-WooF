@@ -1,0 +1,32 @@
+[[logs]]
+timestamp = "2024-01-28 20:06:19"
+client_ip = "127.0.0.1"
+host = "127.0.0.1"
+risks = [ "HTTP Host Header Injection",]
+
+[[logs]]
+timestamp = "2024-01-30 18:17:28"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+timestamp = "2024-02-19 00:23:16"
+client_ip = "127.0.0.1"
+host = "127.0.0.1"
+risks = [ "HTTP Host Header Injection",]
+
+timestamp = "2024-02-19 00:43:01"
+client_ip = "127.0.0.1"
+host = "127.0.0.1"
+risks = [ "HTTP Host Header Injection",]
+
+timestamp = "2024-02-19 00:43:49"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+timestamp = "2024-02-19 00:44:41"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+

@@ -5,7 +5,7 @@ import * as toml from 'https://cdn.skypack.dev/toml';
 async function fetchAndDisplayTOML() {
   try {
     // Fetch the TOML file
-    const response = await fetch('./Logs/main.toml');
+    const response = await fetch('/logs');
     if (!response.ok) {
       throw new Error(`Error fetching TOML file: ${response.statusText}`);
     }
