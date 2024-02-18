@@ -50,8 +50,7 @@ def check_ip_ban(ip_address: str) -> tuple:
     """Checks if an IP address is banned, returning ban information if found and active.
 
     Args:
-        conn: The SQLite connection object.
-        @param ip_address: The IP address to check.
+        ip_address: The IP address to check.
 
     Returns:
         A tuple containing (is_banned, ip_address, reason, expiration_date, source)
@@ -94,11 +93,11 @@ def insert_blacklisted_user(
 
     Args:
         - conn: The SQLite connection object. -
-        @param ip_address: The IP address to blacklist.
-        @param expiration_date: The date and time when the ban should expire.
-        @param reason: An optional reason for blacklisting the IP address.
-        @param source: An optional source of information for the blacklisting.
-        @param conn:
+        ip_address: The IP address to blacklist.
+        expiration_date: The date and time when the ban should expire.
+        reason: An optional reason for blacklisting the IP address.
+        source: An optional source of information for the blacklisting.
+        conn:
     """
 
     def preform_insert(db_connection):
@@ -116,23 +115,17 @@ def insert_blacklisted_user(
             preform_insert(conn)
 
 
-def strike_counter(ip_address: str) -> int:
-    with sqlite3.connect(PUNISHMENTS_DB_NAME) as conn:
-        # Count existing non-expired strikes:
-        existing_strikes = conn.execute("SELECT COUNT(*) FROM strikes WHERE ip_address = ? AND expiration_date > ?",
-                                        (ip_address, datetime.now())).fetchone()[0]
-        return existing_strikes
-
-
 def strike_user(
         ip_address: str,
         reason: str = "Not specified"
-) -> None:
+) -> int:
     """Adds a strike to the user, applies punishments based on existing strikes, and updates blacklist.
 
     Args:
-        @param ip_address: The IP address of the user to strike.
-        @param reason: An optional reason for the strike.
+        ip_address: The IP address of the user to strike.
+        reason: An optional reason for the strike.
+    Returns:
+        The number of strikes the user have
     """
     with sqlite3.connect(PUNISHMENTS_DB_NAME) as conn:
         # Insert strike:
@@ -147,7 +140,8 @@ def strike_user(
         conn.commit()
 
         # Count existing non-expired strikes:
-        existing_strikes = strike_counter(ip_address)
+        existing_strikes = conn.execute("SELECT COUNT(*) FROM strikes WHERE ip_address = ? AND expiration_date > ?",
+                                     (ip_address, datetime.now())).fetchone()[0]
 
         # Determine expiration based on strike count:
         if existing_strikes == 1:
@@ -160,6 +154,8 @@ def strike_user(
             expiration_date = datetime.now() + (timedelta(days=365) * 1000)  # Make it +1000 years
             insert_blacklisted_user(ip_address, expiration_date, "Permanent ban due to repeated strikes",
                                     conn=conn)  # No expiration
+
+        return existing_strikes
 
 
 validate_table()  # Always run this function to allow for proper work with the database
@@ -174,7 +170,7 @@ if __name__ == '__main__':
     # source="WAF alert") insert_blacklisted_user("192.168.1.100", datetime.now() + timedelta(seconds=1))
 
     # strike_user('192.168.1.100', 'L')
-    strike_user('127.0.0.1', 'L')
+    # strike_user('127.0.0.1', 'L')
     # Will return the ban with the furthest expiration date V
     # is_banned, ip, reason, expiration, source = check_ip_ban("127.0.0.1")
     print(check_ip_ban("127.0.0.1"))
