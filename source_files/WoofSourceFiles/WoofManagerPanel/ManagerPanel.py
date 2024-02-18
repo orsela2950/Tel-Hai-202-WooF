@@ -27,7 +27,7 @@ app = FastAPI()
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     # Redirect to /pages/menu.html
-    return RedirectResponse(url='/pages/menu.html')
+    return RedirectResponse(url='/pages/main.html')
 
 
 @app.post("/submit-settings")
