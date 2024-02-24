@@ -83,7 +83,7 @@ class Logger:
 
         # Append the log entry within the [[logs]] section
         with open(self.security_log_file, "a") as f:
-            f.write(toml.dumps(log_entry) + '\n')
+            f.write(toml.dumps({"logs": [log_entry]}) + '\n')
 
     def log_debug_toml(self, message: str):
         """

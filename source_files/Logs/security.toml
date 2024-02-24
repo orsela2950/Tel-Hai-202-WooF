@@ -10,23 +10,66 @@ client_ip = "127.0.0.1"
 host = "testwaf202.com"
 risks = [ "Ddos",]
 
-timestamp = "2024-02-19 00:23:16"
+[[logs]]
+timestamp = "2024-02-21 18:13:33"
 client_ip = "127.0.0.1"
 host = "127.0.0.1"
 risks = [ "HTTP Host Header Injection",]
 
-timestamp = "2024-02-19 00:43:01"
-client_ip = "127.0.0.1"
-host = "127.0.0.1"
-risks = [ "HTTP Host Header Injection",]
 
-timestamp = "2024-02-19 00:43:49"
+[[logs]]
+timestamp = "2024-02-21 18:17:05"
 client_ip = "127.0.0.1"
 host = "testwaf202.com"
 risks = [ "Ddos",]
 
-timestamp = "2024-02-19 00:44:41"
+
+[[logs]]
+timestamp = "2024-02-21 18:23:42"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "HTTP Parameter Pollution",]
+
+
+[[logs]]
+timestamp = "2024-02-24 17:10:49"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 17:23:44"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 17:32:51"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 18:01:46"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 18:03:19"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 18:25:16"
 client_ip = "127.0.0.1"
 host = "testwaf202.com"
 risks = [ "Ddos",]
+
 

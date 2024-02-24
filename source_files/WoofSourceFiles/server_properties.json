@@ -7,7 +7,7 @@
         "HostHeaderInjection": true,
         "HPP": true,
         "OpenRedirect": true,
-        "SQL_Injection": false,
+        "SQL_Injection": true,
         "SSI_Injection": true,
         "XSS": true,
         "XST": true
