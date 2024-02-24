@@ -973,3 +973,43 @@ url = "http://testwaf202.com/"
 target_url = "http://127.0.0.1:8000/"
 
 
+[[logs]]
+timestamp = "2024-02-24 18:30:50"
+request_method = "GET"
+client_host = "127.0.0.1:47446"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-24 19:14:37"
+request_method = "GET"
+client_host = "127.0.0.1:49099"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-24 19:14:50"
+request_method = "GET"
+client_host = "127.0.0.1:49100"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-24 19:15:24"
+request_method = "GET"
+client_host = "127.0.0.1:49116"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-24 19:15:26"
+request_method = "POST"
+client_host = "127.0.0.1:49118"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+

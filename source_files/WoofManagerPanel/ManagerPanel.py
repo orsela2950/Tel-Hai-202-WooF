@@ -7,7 +7,6 @@ import json
 # Import custom modules
 import serverInfoWrite
 
-
 PORT = 20343
 # Ip is the loopback ip localhost/127.0.0.1
 
@@ -18,7 +17,6 @@ json_path = join(program_dir, '..', 'WoofSourceFiles/server_properties.json')
 logs_dir = join(program_dir, '..', 'logs')
 logs_path = join(logs_dir, 'main.toml')
 security_logs_path = join(logs_dir, 'security.toml')
-
 
 # Create the FastAPI instance
 app = FastAPI()
@@ -94,4 +92,4 @@ async def root():
 app.mount('/pages', StaticFiles(directory=pages_dir), name='pages')
 
 if __name__ == '__main__':
-    run(app, port=PORT)
+    run("ManagerPanel:app", port=PORT, reload=True)
