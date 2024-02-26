@@ -1014,6 +1014,30 @@ target_url = "http://127.0.0.1:8000/"
 
 
 [[logs]]
+timestamp = "2024-02-24 20:01:44"
+request_method = "GET"
+client_host = "127.0.0.1:53328"
+url = "http://127.0.0.1/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-24 20:03:18"
+request_method = "GET"
+client_host = "127.0.0.1:53405"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-24 20:03:28"
+request_method = "GET"
+client_host = "127.0.0.1:53406"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
 timestamp = "2024-02-26 13:48:43"
 request_method = "POST"
 client_host = "127.0.0.1:61184"
