@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse, FileResponse
+from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from uvicorn import run
 from os.path import join, abspath, dirname, isfile
@@ -7,6 +8,7 @@ import json
 import sqlite3
 # Import custom modules
 import serverInfoWrite
+import re
 
 PORT = 20343
 # Ip is the loopback ip localhost/127.0.0.1
@@ -28,6 +30,46 @@ app = FastAPI()
 async def root():
     # Redirect to /pages/main.html
     return RedirectResponse(url='/pages/main.html')
+
+
+# Regular expression for validating an IPv4 address
+ip_address_pattern = re.compile(
+    r"^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\. "
+    r"(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\. "
+    r"(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\. "
+    r"(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$"
+)
+
+
+@app.post("/add-blacklist-row")
+async def add_blacklist_row(request_data: dict):
+    # Extract data from the request
+    ip_address = request_data.get("ipAddress")
+    reason = request_data.get("reason")
+    expiration_date = request_data.get("expirationDate")
+    source = request_data.get("source")
+
+    # Validate IP address using regex
+    if not re.match(ip_address_pattern, ip_address):
+        raise HTTPException(status_code=400, detail="Invalid IP address format")
+
+    # Perform validation and insert the new row into the database
+    try:
+        # Perform SQL validation here if needed
+
+        # Use parameterized query to prevent SQL injection
+        with sqlite3.connect(db_path) as db_connection:
+            cursor = db_connection.cursor()
+            cursor.execute(
+                "INSERT INTO blacklist (ip_address, reason, expiration_date, source) VALUES (?, ?, ?, ?)",
+                (ip_address, reason, expiration_date, source),
+            )
+            db_connection.commit()
+
+    except sqlite3.Error as sql_error:
+        raise HTTPException(status_code=500, detail=f"Error executing SQL query: {sql_error}")
+
+    return JSONResponse(content={"message": "Row added successfully"})
 
 
 @app.post('/submit-settings')

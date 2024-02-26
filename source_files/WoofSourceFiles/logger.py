@@ -72,7 +72,7 @@ class Logger:
             event: An instance of SecurityEvent containing security-related information.
         """
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-        risks = [str(risk.getName()) for risk in event.SecurityRisks]
+        risks = [str(risk.get_name()) for risk in event.SecurityRisks]
         host = str(event.request.headers.get("host"))
         log_entry = {
             "timestamp": timestamp,

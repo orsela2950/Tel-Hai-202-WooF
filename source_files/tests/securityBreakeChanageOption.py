@@ -7,7 +7,7 @@ class SecurityBreak(ABC):
     def checkThreats(request: fastapi.Request, clientIp : str):
         pass
     @abstractmethod
-    def getName(self):
+    def get_name(self):
         pass
     
 
@@ -18,7 +18,7 @@ class HostHeaderInjection(SecurityBreak):
     def checkThreats(request: fastapi.Request):
         return None
     
-    def getName(self):
+    def get_name(self):
         return self.name
     
 class HPP(SecurityBreak):
@@ -28,7 +28,7 @@ class HPP(SecurityBreak):
     def checkThreats(request: fastapi.Request):
         return None
     
-    def getName(self):
+    def get_name(self):
         return self.name
 
 class OpenRedirect(SecurityBreak):
@@ -38,7 +38,7 @@ class OpenRedirect(SecurityBreak):
     def checkThreats(request: fastapi.Request):
         return None
     
-    def getName(self):
+    def get_name(self):
         return self.name
 
 class SQLInjection(SecurityBreak):
@@ -48,7 +48,7 @@ class SQLInjection(SecurityBreak):
     def checkThreats(request: fastapi.Request):
         return None
     
-    def getName(self):
+    def get_name(self):
         return self.name
 
 class SSIInjection(SecurityBreak):
@@ -58,7 +58,7 @@ class SSIInjection(SecurityBreak):
     def checkThreats(request: fastapi.Request):
         return None
     
-    def getName(self):
+    def get_name(self):
         return self.name
 
 class XSS(SecurityBreak):
@@ -68,7 +68,7 @@ class XSS(SecurityBreak):
     def checkThreats(request: fastapi.Request):
         return None
     
-    def getName(self):
+    def get_name(self):
         return self.name
 
 class XST(SecurityBreak):
@@ -78,5 +78,5 @@ class XST(SecurityBreak):
     def checkThreats(request: fastapi.Request):
         return None
     
-    def getName(self):
+    def get_name(self):
         return self.name

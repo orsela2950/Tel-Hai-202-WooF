@@ -17,7 +17,7 @@ class SecurityEvent:
         self.SecurityRisks = []
 
     def printEventDescription(self):
-        security_breaks = ", ".join([risk.getName() for risk in self.SecurityRisks])
+        security_breaks = ", ".join([risk.get_name() for risk in self.SecurityRisks])
         return (
             "You've been caught doing: {}".format(
                 security_breaks
@@ -32,7 +32,7 @@ class SecurityEvent:
         return len(self.SecurityRisks) > 0
 
     def return_risks(self):
-        return [risk.getName() for risk in self.SecurityRisks]
+        return [risk.get_name() for risk in self.SecurityRisks]
 
     def return_request_body(self):
         return str(re.sub(r"[<>&]", r"\&", str(self.request.body)))

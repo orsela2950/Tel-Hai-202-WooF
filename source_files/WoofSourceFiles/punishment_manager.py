@@ -86,7 +86,7 @@ def insert_blacklisted_user(
         ip_address: str,
         expiration_date: datetime,
         reason: str = "Not specified",  # Optional parameter with default value
-        source: str = "Unknown",  # Optional parameter with default value
+        source: str = "Woof",  # Optional parameter with default value
         conn: sqlite3.Connection = None  # Type hint for the database connection
 ) -> None:
     """Inserts a user into the blacklist table with optional reason and source.

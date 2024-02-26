@@ -108,3 +108,10 @@ host = "testwaf202.com"
 risks = [ "Open Redirect Vulnerability",]
 
 
+[[logs]]
+timestamp = "2024-02-26 20:45:10"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos", "Open Redirect Vulnerability",]
+
+
