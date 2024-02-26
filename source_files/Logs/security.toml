@@ -73,3 +73,31 @@ host = "testwaf202.com"
 risks = [ "Ddos",]
 
 
+[[logs]]
+timestamp = "2024-02-26 13:48:43"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+
+[[logs]]
+timestamp = "2024-02-26 18:43:09"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SQL Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-26 18:47:44"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SQL Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-26 18:56:03"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
