@@ -169,8 +169,8 @@ if __name__ == '__main__':
     # reason="Suspicious activity") insert_blacklisted_user("192.168.1.100", datetime.now() + timedelta(minutes=2),
     # source="WAF alert") insert_blacklisted_user("192.168.1.100", datetime.now() + timedelta(seconds=1))
 
-    # strike_user('192.168.1.100', 'L')
+    strike_user('192.168.1.100', 'L')
     # strike_user('127.0.0.1', 'L')
     # Will return the ban with the furthest expiration date V
     # is_banned, ip, reason, expiration, source = check_ip_ban("127.0.0.1")
-    print(check_ip_ban("127.0.0.1"))
+    # print(check_ip_ban("127.0.0.1"))
