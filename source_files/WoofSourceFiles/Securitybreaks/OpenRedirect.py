@@ -22,9 +22,10 @@ def remove_url_parameters(request_url):
 
 class OpenRedirect(SecurityBreak):
     def __init__(self):
+        super().__init__()  # Call parent's constructor
         self.name = "Open Redirect Vulnerability"
 
-    async def checkThreats(self, request: fastapi.Request, clientIp: str) -> tuple[bool, str] | tuple[bool, None]:
+    async def check_threats(self, request: fastapi.Request, clientIp: str) -> tuple[bool, str] | tuple[bool, None]:
         """
 
         @param request:
@@ -53,5 +54,8 @@ class OpenRedirect(SecurityBreak):
 
         return False, None
 
-    def getName(self):
+    def get_name(self):
         return self.name
+
+    def get_json_name(self):  # json type name, and not the name for displaying
+        return 'OpenRedirect'

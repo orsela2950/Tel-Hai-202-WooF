@@ -5,9 +5,10 @@ import urllib.parse
 
 class HPP(SecurityBreak):
     def __init__(self):
+        super().__init__()  # Call parent's constructor
         self.name = "HTTP Parameter Pollution"
 
-    async def checkThreats(self, request: fastapi.Request, clientIp: str):
+    async def check_threats(self, request: fastapi.Request, clientIp: str):
         """
     Function that checks if a request contains HTTP Parameter Pollution (HPP).
         First, it checks for HPP in the parameters when entered in the URL directly
@@ -35,5 +36,8 @@ class HPP(SecurityBreak):
 
         return False, None
 
-    def getName(self):
+    def get_name(self):
         return self.name
+
+    def get_json_name(self):  # json type name, and not the name for displaying
+        return 'HPP'

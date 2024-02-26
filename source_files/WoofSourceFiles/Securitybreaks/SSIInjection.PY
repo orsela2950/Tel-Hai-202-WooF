@@ -5,9 +5,10 @@ import fastapi
 
 class SSIInjection(SecurityBreak):
     def __init__(self):
+        super().__init__()  # Call parent's constructor
         self.name = "SSI Injection"
 
-    async def checkThreats(self, request: fastapi.Request, clientIp: str):
+    async def check_threats(self, request: fastapi.Request, clientIp: str):
         """Function to check if a request contains SSIi (Server-Side Includes Injection) characters.
 
         Args:
@@ -25,8 +26,11 @@ class SSIInjection(SecurityBreak):
 
         return False, None
 
-    def getName(self):
+    def get_name(self):
         return self.name
+
+    def get_json_name(self):  # json type name, and not the name for displaying
+        return 'SSI_Injection'
 
     def is_text_ssii(self, text: object) -> object:
         """Function to check if a string contains SSI injection (Server-Side Includes Injection) characters.

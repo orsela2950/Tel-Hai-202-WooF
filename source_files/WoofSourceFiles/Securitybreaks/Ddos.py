@@ -36,13 +36,14 @@ async def calculate_combined_hash(request: fastapi.Request):
 
 class Ddos(SecurityBreak):
     def __init__(self):
+        super().__init__()  # Call parent's constructor
         self._name = "Ddos"
         self._size = 10
         self._timeout = 2  # sec before removing hash from map
 
         self._hash_time_map = {}  # Map to store hashes and timestamps
 
-    async def checkThreats(self, request: fastapi.Request, clientIp: str):
+    async def check_threats(self, request: fastapi.Request, clientIp: str):
         """Checks for potential DDoS attack using a hash-time map.
 
         Args:
@@ -51,8 +52,6 @@ class Ddos(SecurityBreak):
         Returns:
             (bool, str): True and a message if a potential DDoS is detected,
                         False and None otherwise.
-                        @param request:
-                        @param clientIp:
         """
         combined_hash = await calculate_combined_hash(request)
 
@@ -77,5 +76,8 @@ class Ddos(SecurityBreak):
         # Add the hash and current timestamp to the map
         self._hash_time_map[combined_hash] = time.time()
 
-    def getName(self):
+    def get_name(self):
         return self._name
+
+    def get_json_name(self):  # json type name, and not the name for displaying
+        return 'DDOS'

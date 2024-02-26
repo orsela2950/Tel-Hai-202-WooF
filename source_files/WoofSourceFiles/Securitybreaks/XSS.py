@@ -15,10 +15,11 @@ with open(xss_malicious_list_path, 'r') as f:
 
 class XSS(SecurityBreak):
     def __init__(self):
+        super().__init__()  # Call parent's constructor
         self.name = "Cross Site Scripting (XSS)"
-        self.debugPrints = False
+        self.debug_prints = False
 
-    async def checkThreats(self, request: fastapi.Request, clientIp: str):
+    async def check_threats(self, request: fastapi.Request, clientIp: str):
         """Check if the request contains XSS Attack
 
         Args:
@@ -32,12 +33,12 @@ class XSS(SecurityBreak):
         # check the content type for not allowed content types
         if ('Content-Type' in request.headers.keys()) and (
                 request.headers['Content-Type'].lower() in blocked_content_types):
-            self.debugPrint('Content type is not allowed: ' + str(request.headers['Content-Type']))
+            self.debug_print('Content type is not allowed: ' + str(request.headers['Content-Type']))
             return True, 'Content type : ' + str(request.headers['Content-Type'])
 
         for param_name, param_value in request.query_params.items():
             if True in (word in param_value for word in blocked_keyword_list):
-                self.debugPrint('blocked a packet because it cannot contain "' + param_value + '"')
+                self.debug_print('blocked a packet because it cannot contain "' + param_value + '"')
                 return True, 'The packet cant contain "' + param_value + '"'
 
         return False, None
@@ -61,9 +62,12 @@ class XSS(SecurityBreak):
 
         return False
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
-    def debugPrint(self, text: str):
-        if self.debugPrint:
+    def get_json_name(self):  # json type name, and not the name for displaying
+        return 'XSS'
+
+    def debug_print(self, text: str):
+        if self.debug_prints:
             print('[XSS debug] ' + text)
