@@ -37,6 +37,10 @@ def get_server_ipead_url():
     return 'http://' + get_server_ip()
 
 
+def get_rules_state():
+    return get_json_argument('rules')
+
+
 def remove_scheme(url: str):
     """removes the http/https opening from urls
 
