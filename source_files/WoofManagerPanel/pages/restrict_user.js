@@ -5,7 +5,7 @@ import * as toml from 'https://cdn.skypack.dev/toml';
 async function deleteRow(id) {
     try {
         // Send a request to the server to delete the row with the specified ID
-        const response = await fetch(`/delete/${id}`, {
+        const response = await fetch(`/blacklist/${id}`, {
             method: 'DELETE',
         });
 
