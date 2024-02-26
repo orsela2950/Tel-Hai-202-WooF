@@ -35,6 +35,8 @@ rule_engine.add_rule(securityRule_OpenRedirect())
 rule_engine.add_rule(securityRule_SQLInjection())
 rule_engine.add_rule(securityRule_XSS())
 rule_engine.add_rule(securityRule_XST())
+rule_engine.update_rules_state()  # Update rules state
+
 
 
 async def send_safe_packet(path: str, request: fastapi.Request):
@@ -81,11 +83,6 @@ async def send_safe_packet(path: str, request: fastapi.Request):
         if _DEBUGGING:
             print(f"An unexpected error occurred: {e}")
         return fastapi.Response(content=message_loader.load_error_message(e), status_code=500)
-
-
-@app.api_route("/favicon.ico", methods=["GET"])
-async def favicon(request: fastapi.Request):
-    return await send_safe_packet("favicon.ico", request)
 
 
 # Define a route that can handle any HTTP method and any path
