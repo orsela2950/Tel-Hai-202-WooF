@@ -1181,3 +1181,83 @@ url = "http://testwaf202.com/"
 target_url = "http://127.0.0.1:8000/"
 
 
+[[logs]]
+timestamp = "2024-02-26 20:53:33"
+request_method = "GET"
+client_host = "127.0.0.1:6991"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-26 20:53:34"
+request_method = "GET"
+client_host = "127.0.0.1:6993"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-26 20:54:53"
+request_method = "GET"
+client_host = "127.0.0.1:7016"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-26 20:54:58"
+request_method = "GET"
+client_host = "127.0.0.1:7024"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-26 20:55:00"
+request_method = "GET"
+client_host = "127.0.0.1:7028"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-27 21:41:07"
+request_method = "GET"
+client_host = "127.0.0.1:4763"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-27 21:41:09"
+request_method = "GET"
+client_host = "127.0.0.1:4765"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-27 21:41:12"
+request_method = "GET"
+client_host = "127.0.0.1:4767"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-27 21:41:43"
+request_method = "GET"
+client_host = "127.0.0.1:4772"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
+[[logs]]
+timestamp = "2024-02-27 21:41:45"
+request_method = "GET"
+client_host = "127.0.0.1:4774"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
