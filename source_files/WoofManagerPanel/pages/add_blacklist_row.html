@@ -22,9 +22,12 @@
     <label for="expirationDate">Expiration Date:</label>
     <input type="datetime-local" id="expirationDate" name="expirationDate" required>
 
-    <button id="addRowButton" onclick="submitForm()">
+    <button type="submit">
     <ion-icon name="add-circle-outline"></ion-icon> Add Row
     </button>
   </form>
+  <div id="popup" style="display: none;">
+    <h2 style="color: rgb(30, 215, 30); font-weight: bold;" >Submitted!</h2>
+  </div>
 </body>
 </html>
