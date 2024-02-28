@@ -1,108 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, max-age=0">
-  <link rel="stylesheet" href="pages.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, max-age=0">
+    <link rel="stylesheet" href="pages.css">
 </head>
+
 <body>
-  <h1>Rules Settings</h1>
-  <form id="rulesForm">
-      <div>
-        <input type="checkbox" id="DDOS" name="DDOS">
-        <label for="DDOS">DDOS</label>
-      </div>
-    <br>
-    <div>
-      <input type="checkbox" id="HostHeaderInjection" name="HostHeaderInjection">
-      <label for="HostHeaderInjection">HostHeaderInjection</label>
+<div id="main-wrapper">
+    <h1>Rules Settings</h1>
+    <form id="rulesForm">
+        <div id="rulesFormInnerDiv">
+            <div>
+                <input type="checkbox" id="DDOS" name="DDOS">
+                <label for="DDOS">DDOS</label>
+            </div>
+            <div>
+                <input type="checkbox" id="HostHeaderInjection" name="HostHeaderInjection">
+                <label for="HostHeaderInjection">HostHeaderInjection</label>
+            </div>
+            <div>
+                <input type="checkbox" id="HPP" name="HPP">
+                <label for="HPP">HPP</label>
+            </div>
+            <div>
+                <input type="checkbox" id="OpenRedirect" name="OpenRedirect">
+                <label for="OpenRedirect">OpenRedirect</label>
+            </div>
+            <div>
+                <input type="checkbox" id="SQL_Injection" name="SQL_Injection">
+                <label for="SQL_Injection">SQL_Injection</label>
+            </div>
+            <div>
+                <input type="checkbox" id="SSI_Injection" name="SSI_Injection">
+                <label for="SSI_Injection">SSI_Injection</label>
+            </div>
+            <div>
+                <input type="checkbox" id="XSS" name="XSS">
+                <label for="XSS">XSS</label>
+            </div>
+            <div>
+                <input type="checkbox" id="XST" name="XST">
+                <label for="XST">XST</label>
+            </div>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="popup" style="display: none;">
+        <h2 style="color: rgb(30, 215, 30); font-weight: bold;">Submitted!</h2>
     </div>
-    <br>
-    <div>
-      <input type="checkbox" id="HPP" name="HPP">
-      <label for="HPP">HPP</label>
-    </div>
-    <br>
-    <div>
-      <input type="checkbox" id="OpenRedirect" name="OpenRedirect">
-      <label for="OpenRedirect">OpenRedirect</label>
-    </div>
-    <br>
-    <div>
-      <input type="checkbox" id="SQL_Injection" name="SQL_Injection">
-      <label for="SQL_Injection">SQL_Injection</label>
-    </div>
-    <br>
-    <div>
-      <input type="checkbox" id="SSI_Injection" name="SSI_Injection">
-      <label for="SSI_Injection">SSI_Injection</label>
-    </div>
-    <br>
-    <div>
-      <input type="checkbox" id="XSS" name="XSS">
-      <label for="XSS">XSS</label>
-    </div>
-    <br>
-    <div>
-      <input type="checkbox" id="XST" name="XST">
-      <label for="XST">XST</label>
-    </div>
-    <br>
-    <button type="submit">Submit</button>
-  </form>
-  <div id="popup" style="display: none;">
-    <h2 style="color: rgb(30, 215, 30); font-weight: bold;" >Submitted!</h2>
-  </div>
+</div>
+</body>
 <script>
-  const form = document.getElementById('rulesForm');
-  const popup = document.getElementById('popup');
+    const form = document.getElementById('rulesForm');
+      const popup = document.getElementById('popup');
 
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent default form submission
-    const formData = new FormData(form); // Get form data
-    const data = Object.fromEntries(formData) // Convert to object
-    console.log("data:")
-    console.log(data)
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent default form submission
+        const formData = new FormData(form); // Get form data
+        const data = Object.fromEntries(formData) // Convert to object
+        console.log("data:")
+        console.log(data)
 
-    try {
-      const response = await fetch('/submit-rules', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        try {
+          const response = await fetch('/submit-rules', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (response.ok) {
+            popup.style.display = 'block';
+            setTimeout(() => {
+              popup.style.display = 'none';
+            }, 2000); // Hide popup after 2 seconds
+          } else {
+            console.error('Error submitting data:', await response.text());
+          }
+        } catch (error) {
+          console.error('Error sending request:', error);
+        }
       });
 
-      if (response.ok) {
-        popup.style.display = 'block';
-        setTimeout(() => {
-          popup.style.display = 'none';
-        }, 2000); // Hide popup after 2 seconds
-      } else {
-        console.error('Error submitting data:', await response.text());
-      }
-    } catch (error) {
-      console.error('Error sending request:', error);
-    }
-  });
+      async function checkSwitches() {
+        try {
+          const response = await fetch('/check-switches');
+          const jsonRes = await response.json();
 
-  async function checkSwitches() {
-    try {
-      const response = await fetch('/check-switches');
-      const jsonRes = await response.json();
-
-      for (const key in jsonRes) {
-        const checkbox = document.getElementById(key);
-        if (checkbox) {
-          checkbox.checked = jsonRes[key];
+          for (const key in jsonRes) {
+            const checkbox = document.getElementById(key);
+            if (checkbox) {
+              checkbox.checked = jsonRes[key];
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }
 
-  checkSwitches();
-  </script>
-  </body>
+      checkSwitches();
+</script>
+
 </html>
