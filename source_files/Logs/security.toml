@@ -150,3 +150,31 @@ host = "testwaf202.com"
 risks = [ "Cross Site Scripting (XSS)",]
 
 
+[[logs]]
+timestamp = "2024-02-29 22:19:54"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SSI Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-29 22:20:14"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SSI Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-29 22:20:30"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SSI Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-29 22:20:37"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SSI Injection",]
+
+

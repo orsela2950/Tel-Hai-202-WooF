@@ -2,6 +2,7 @@ from Securitybreaks.SecurityBreak import SecurityBreak
 import fastapi
 from typing import Tuple
 import os
+from urllib.parse import unquote
 
 blocked_content_types = ['text/html', 'application/javascript', 'application/x-shockwave-flash', 'application/xml',
                          'application/x-www-form-urlencoded']
@@ -31,7 +32,6 @@ class XSS(SecurityBreak):
         Returns:
             (Bool, str): true for threats found false for safe packet, a summary of the found attack if found or none
         """
-        print(blocked_keyword_list)
 
         # Check the content type for not allowed content types
         if ('Content-Type' in request.headers.keys()) and (
@@ -47,11 +47,17 @@ class XSS(SecurityBreak):
 
         # Check request body for XSS
         body = await request.body()
-        print(str(body))
-        word_in_body_list = [word for word in blocked_keyword_list if word in str(body)]
+        decoded_text = unquote(body.decode())
+        word_in_body_list = [word for word in blocked_keyword_list if word in body.decode()]
+        word_in_decode_body_list = [word for word in blocked_keyword_list if word in str(decoded_text)]
+
         if word_in_body_list:
             self.debug_print('Blocked a packet because it contains XSS in the body')
             return True, f'The packet contains XSS param "{word_in_body_list}" in the body'
+
+        if word_in_decode_body_list:
+            self.debug_print('Blocked a packet because it contains XSS in the body')
+            return True, f'The packet contains XSS param "{word_in_decode_body_list}" in the body'
 
         return False, ""
 
