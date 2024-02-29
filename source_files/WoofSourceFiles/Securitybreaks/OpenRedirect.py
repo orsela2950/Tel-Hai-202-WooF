@@ -6,6 +6,7 @@ import os
 allowed_urls_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'allowed_urls.txt')
 with open(allowed_urls_path, 'r') as f:
     allowed_urls = f.readlines()
+    allowed_urls_list = [url.replace('\n', '') for url in allowed_urls]
 
 
 def remove_url_parameters(request_url):
