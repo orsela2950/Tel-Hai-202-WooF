@@ -1677,3 +1677,11 @@ url = "http://testwaf202.com/"
 target_url = "http://127.0.0.1:8000/"
 
 
+[[logs]]
+timestamp = "2024-02-29 22:34:10"
+request_method = "GET"
+client_host = "127.0.0.1:36516"
+url = "http://testwaf202.com/"
+target_url = "http://127.0.0.1:8000/"
+
+
