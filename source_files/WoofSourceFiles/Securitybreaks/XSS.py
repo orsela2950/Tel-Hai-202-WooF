@@ -1,14 +1,20 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
+from Securitybreaks.Helper import Helper
 import fastapi
 from urllib.parse import parse_qs
+import os
 
+helper=Helper()
 blocked_keyword_list = []
 blocked_content_types = ['text/html', 'application/javascript', 'application/x-shockwave-flash', 'application/xml','application/x-www-form-urlencoded']
 
+
 #load the word list:
-with open('Securitybreaks\XSS_Malicious.txt', 'r') as f:
+with helper.findFile_Read("XSS_Malicious.txt","source_files\\WoofSourceFiles\\Securitybreaks") as f:
     blocked_keyword_list = f.readlines()
     f.close()
+  
+
 class XSS(SecurityBreak):
     def __init__(self):
         self.name = "Cross Site Scripting (XSS)"
@@ -62,4 +68,3 @@ class XSS(SecurityBreak):
     def debugPrint(self, text :str):
         if self.debugPrint:
             print('[XSS debug] ' + text)
-    

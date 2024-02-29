@@ -5,11 +5,12 @@ import Securitybreaks.SecurityBreak as SecurityBreak
 from Security.SecurityEvent import SecurityEvent
 import os
 from pathlib import Path
+from elasticsearch import Elasticsearch
 
 class SecurityRuleEngine:
-    def __init__(self):
+    def __init__(self,ElasticSearchDB:Elasticsearch):
         self.rules = [] # this will be a list of the security break interface object
-
+        self.es=ElasticSearchDB
     def add_rule(self, rule: SecurityBreak):
         self.rules.append(rule)
 
@@ -32,11 +33,22 @@ class SecurityRuleEngine:
 
     def log_security_break(self,event): 
         # Log the security break
-        with self.findFile("securityEvents.log","source_files\WoofSourceFiles\Logs") as log_file:
+        with self.findFile_Write("securityEvents.log","source_files\\WoofSourceFiles\\Logs") as log_file:
             log_file.write(event.printEventDescription())
             log_file.close()
+        
+        
+        log_data = {
+            "@timestamp": datetime.datetime.now().isoformat(),
+            "client_ip": event.ip,
+            "request_Host": str(event.request.headers.get("host")),
+            "security_breaks": [str(risk.getName()) for risk in event.SecurityRisks]
+        }
+
+        # Index the log data to Elasticsearch
+        self.es.index(index="security_events", body=log_data)
     
-    def findFile(self,name, path):
+    def findFile_Write(self,name, path):
         filePath=""
         for root, dirs, files in os.walk(os.getcwd()):
             if name in files:

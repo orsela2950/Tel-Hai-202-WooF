@@ -1,0 +1,7 @@
+{
+  "server_host": "testwaf202.com",
+  "multi_ip": false,
+  "server_ips_ports": [
+    ["127.0.0.1", 8000]
+  ]
+}

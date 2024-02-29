@@ -1,14 +1,17 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
+from Securitybreaks.Helper import Helper
 import urllib.parse
 from typing import Tuple
 import fastapi
+
+helper=Helper()
 
 class OpenRedirect(SecurityBreak):
     def __init__(self):
      self.name = "Open Redirect Vulnerability"
     
     async def checkThreats(self, request: fastapi.Request, clientIp: str) -> Tuple[bool, str]:
-        with open('Securitybreaks/allowed_urls.txt', 'r') as f:
+        with helper.findFile_Read("allowed_urls.txt","source_files\\WoofSourceFiles\\Securitybreaks") as f:
             allowed_urls = f.readlines()
             f.close()
 

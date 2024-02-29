@@ -46,15 +46,11 @@ class HostHeaderInjection(SecurityBreak):
                 if not re.match(r'^[a-zA-Z0-9.\-:%]+\Z', self.serverInfoModule.remove_scheme(host_header_to_check)):
                     self.debugPrint('blocked because of escape chars and illegal chars ' + str(self.serverInfoModule.remove_scheme(host_header_to_check)))
                     return True ,f"{curr_host_header}: {host_header_to_check}"
-                
-                #check if the server contains the requested host
-                isHostMatches = False
-                for server_host in self.serverInfoModule.URL_TO_IP:
-                    if self.compare_hosts(server_host, host_header_to_check):
-                        isHostMatches = True
-                if not isHostMatches:
+
+                # check  the requested host
+                if not self.compare_hosts(self.serverInfoModule.get_server_host(), host_header_to_check):
                     self.debugPrint('blocked because hosts didnt matched')
-                    return True,f"{self.serverInfoModule.URL_TO_IP}:{host_header_to_check}"
+                    return True, f"{self.serverInfoModule.get_server_host()}:{host_header_to_check}"
                     
             
         # If passed all the checks, return False (not HHI):
