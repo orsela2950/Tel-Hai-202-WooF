@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, max-age=0">
-  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-  <script type="module" src="add_blacklist_row.js" defer></script>
-  <link rel="stylesheet" href="pages.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, max-age=0">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script type="module" src="add_blacklist_row.js" defer></script>
+    <link rel="stylesheet" href="pages.css">
 </head>
 <body>
-  <h2>Add Blacklist Row</h2>
+<h2>Add Blacklist Row</h2>
 
-  <!-- Form for adding a new blacklist row -->
-  <form id="addBlacklistForm">
+<!-- Form for adding a new blacklist row -->
+<form id="addBlacklistForm">
     <label for="ipAddress">IP Address:</label>
     <input type="text" id="ipAddress" name="ipAddress" required>
 
@@ -23,11 +23,12 @@
     <input type="datetime-local" id="expirationDate" name="expirationDate" required>
 
     <button type="submit">
-    <ion-icon name="add-circle-outline"></ion-icon> Add Row
+        <ion-icon name="add-circle-outline"></ion-icon>
+        Add Row
     </button>
-  </form>
-  <div id="popup" style="display: none;">
-    <h2 style="color: rgb(30, 215, 30); font-weight: bold;" >Submitted!</h2>
-  </div>
+</form>
+<div id="popup" style="display: none;">
+    <h2 style="color: rgb(30, 215, 30); font-weight: bold;">Submitted!</h2>
+</div>
 </body>
 </html>

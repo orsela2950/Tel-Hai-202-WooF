@@ -1,3 +1,7 @@
+#main-wrapper{
+  text-align:center;
+}
+
 /* =========
      Rules
    ========= */
@@ -7,11 +11,15 @@
     line-height: 20px; /* Same value as overall height for vertical alignment */
     margin-top: -2px; /* Adjust this value to position label slightly above checkbox */
 }
-#rulesForm div {
+#rulesFormInnerDiv{
+    width: 25%;
+    margin:0 auto;
+}
+#rulesFormInnerDiv div {
   display: flex; /* Make them inline-flex boxes */
   align-items: center; /* Vertically center content */
   height: 20px; /* Set overall height of the checkbox + label combination */
-  margin-bottom: 15px;
+  margin-bottom: 40px;
 }
 
 /* =========
@@ -160,14 +168,13 @@ button {
   will-change: transform;
 }
 
-/* Add this CSS to style the delete button */
 .delete-button {
   background: black;
   border: none;
   cursor: pointer;
   padding: 0;
   font-size: 1.5em;
-  color: white; /* Set the color of the delete button */
+  color: white;
 }
 
 

@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, max-age=0">
-  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-  <script type="module" src="restrict_user.js" defer></script>
-  <link rel="stylesheet" href="pages.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, max-age=0">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script type="module" src="restrict_user.js" defer></script>
+    <link rel="stylesheet" href="pages.css">
 </head>
 <body>
-  <div id="mainTableContainer">
+<div id="mainTableContainer">
     <h2>Blacklist Table</h2>
     <button id="addRowButton" onclick="window.location.href = '/pages/add_blacklist_row.html'">
-    <ion-icon name="add-circle-outline"></ion-icon> Restrict new user
+        <ion-icon name="add-circle-outline"></ion-icon>
+        Restrict new user
     </button>
     <ul class="responsive-table" id="blacklistTableBody">
-      <!-- Table content will be dynamically added here using JavaScript -->
+        <!-- Table content will be dynamically added here using JavaScript -->
     </ul>
-  </div>
+</div>
 </body>
 </html>
