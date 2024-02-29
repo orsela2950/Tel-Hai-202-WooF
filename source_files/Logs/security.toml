@@ -129,3 +129,24 @@ host = "testwaf202.com"
 risks = [ "Open Redirect Vulnerability",]
 
 
+[[logs]]
+timestamp = "2024-02-29 12:42:46"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+
+[[logs]]
+timestamp = "2024-02-29 13:27:26"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Cross Site Scripting (XSS)",]
+
+
+[[logs]]
+timestamp = "2024-02-29 13:29:20"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Cross Site Scripting (XSS)",]
+
+
