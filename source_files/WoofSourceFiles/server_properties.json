@@ -1,15 +1,15 @@
 {
     "server_host": "testwaf202.com",
     "ip": "127.0.0.1",
-    "port": 8000,
+    "port": "8000",
     "rules": {
-        "DDOS": true,
+        "DDOS": false,
         "HostHeaderInjection": false,
-        "HPP": true,
+        "HPP": false,
         "OpenRedirect": false,
-        "SQL_Injection": true,
-        "SSI_Injection": false,
+        "SQL_Injection": false,
+        "SSI_Injection": true,
         "XSS": true,
-        "XST": false
+        "XST": true
     }
 }

@@ -1,26 +1,22 @@
 import fastapi
 import aiohttp
 import serverInfo
-import json
 from uvicorn import run
-from SecurityRuleEngine import SecurityRuleEngine
-from punishment_manager import *
-
 # Custom modules import
+from SecurityRuleEngine import SecurityRuleEngine
+import message_loader
 import punishment_manager
 from logger import Logger
 
 # import the security breaks
 from Securitybreaks.Ddos import Ddos as securityRule_Ddos
 from Securitybreaks.HostHeaderInjection import HostHeaderInjection as securityRule_HostHeaderInjection
-from Securitybreaks.HPP import HPP as securityRule_HPP
 from Securitybreaks.SSIInjection import SSIInjection as securityRule_SSIInjection
 from Securitybreaks.OpenRedirect import OpenRedirect as securityRule_OpenRedirect
 from Securitybreaks.SQLInjection import SQLInjection as securityRule_SQLInjection
+from Securitybreaks.HPP import HPP as securityRule_HPP
 from Securitybreaks.XSS import XSS as securityRule_XSS
 from Securitybreaks.XST import XST as securityRule_XST
-from Security.SecurityEvent import SecurityEvent
-from Securitybreaks.Helper import Helper
 
 # Declare debugging state
 _DEBUGGING = True
@@ -31,58 +27,16 @@ logger = Logger(_DEBUGGING)
 # Create a SecurityRuleEngine instance
 rule_engine = SecurityRuleEngine(logger)
 
+rule_engine.add_rule(securityRule_Ddos())
+rule_engine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
+rule_engine.add_rule(securityRule_HPP())
+rule_engine.add_rule(securityRule_SSIInjection())
+rule_engine.add_rule(securityRule_OpenRedirect())
+rule_engine.add_rule(securityRule_SQLInjection())
+rule_engine.add_rule(securityRule_XSS())
+rule_engine.add_rule(securityRule_XST())
+rule_engine.update_rules_state()  # Update rules state
 
-def add_rules_based_on_properties(ruleEngine: SecurityRuleEngine, rules_properties: json):
-    """
-    Add rules to the SecurityRuleEngine instance based on the rules defined in server_properties.
-    """
-
-    # clear current rules before using
-    ruleEngine.clear_rules()
-    if rules_properties.get("DDOS", False):
-        ruleEngine.add_rule(securityRule_Ddos())
-    if rules_properties.get("HostHeaderInjection", False):
-        ruleEngine.add_rule(securityRule_HostHeaderInjection(serverInfoModuleIn=serverInfo))
-    if rules_properties.get("HPP", False):
-        ruleEngine.add_rule(securityRule_HPP())
-    if rules_properties.get("SSI_Injection", False):
-        ruleEngine.add_rule(securityRule_SSIInjection())
-    if rules_properties.get("OpenRedirect", False):
-        ruleEngine.add_rule(securityRule_OpenRedirect())
-    if rules_properties.get("SQL_Injection", False):
-        ruleEngine.add_rule(securityRule_SQLInjection())
-    if rules_properties.get("XSS", False):
-        ruleEngine.add_rule(securityRule_XSS())
-    if rules_properties.get("XST", False):
-        ruleEngine.add_rule(securityRule_XST())
-
-
-def load_ban_message(ip, reason, expiration, source):
-    with Helper.findFile_Read("ban_msg.html", "source_files\\WoofSourceFiles\\WoofManagerPanel\\ban_message") as html_f:
-        with Helper.findFile_Read("ban_style.css",
-                                  "source_files\\WoofSourceFiles\\WoofManagerPanel\\ban_message") as css_f:
-            return html_f.read().format(css_styles=css_f.read(), ip=ip, reason=reason, expiration=expiration,
-                                        source=source)
-
-
-def load_error_message(e: Exception):
-    with Helper.findFile_Read(
-            "error_msg.html", "source_files\\WoofSourceFiles\\WoofManagerPanel\\error_message") as html_f:
-        with Helper.findFile_Read(
-                "error_style.css", "source_files\\WoofSourceFiles\\WoofManagerPanel\\error_message") as css_f:
-            # Read the contents of the CSS
-            css_styles = css_f.read()
-
-            # Insert the CSS styles and error message into the HTML template
-            html_content = html_f.read().format(css_styles=css_styles, error=e)
-
-            return html_content
-
-
-def load_denied_message():
-    with Helper.findFile_Read("denied_msg.html", "source_files\\WoofSourceFiles\\WoofManagerPanel\\denied_message"
-                              ) as html_f:
-        return html_f.read()
 
 
 async def send_safe_packet(path: str, request: fastapi.Request):
@@ -128,34 +82,22 @@ async def send_safe_packet(path: str, request: fastapi.Request):
         # Handle other exceptions
         if _DEBUGGING:
             print(f"An unexpected error occurred: {e}")
-        return fastapi.Response(content=load_error_message(e), status_code=500)
-
-
-@app.api_route("/favicon.ico", methods=["GET"])
-async def favicon(request: fastapi.Request):
-    return await send_safe_packet("favicon.ico", request)
+        return fastapi.Response(content=message_loader.load_error_message(e), status_code=500)
 
 
 # Define a route that can handle any HTTP method and any path
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
 async def proxy(path: str, request: fastapi.Request):
     """Handles a request, checking for IP bans and returning appropriate responses."""
-
-    # Load current rules from server_properties.json
-    with open('server_properties.json', 'r') as f:
-        server_properties = json.load(f)
-    # Add rules based on the properties in server_properties.json
-    add_rules_based_on_properties(rule_engine, server_properties.get("rules", {}))
-
-    check_ban = check_ip_ban(request.client.host)
+    check_ban = punishment_manager.check_ip_ban(request.client.host)
     if check_ban[0]:  # If IP is banned
         try:
             ip, reason, expiration, source = check_ban[1:]  # Unpack ban details
 
-            error_response = load_ban_message(ip, reason, expiration, source)
+            error_response = message_loader.load_ban_message(ip, reason, expiration, source)
 
         except ValueError:  # Handle potential errors in ban details
-            error_response = load_denied_message()
+            error_response = message_loader.load_denied_message()
         if _DEBUGGING:
             print("Access Denied response sent to", check_ban[1])
         return fastapi.Response(content=error_response, status_code=403)  # Use 403 Forbidden for clarity
@@ -173,7 +115,8 @@ async def proxy(path: str, request: fastapi.Request):
 
     malicious_event = await rule_engine.is_request_malicious(request, request.client.host)
     if malicious_event.is_there_risk():
-        strike_count = strike_counter(request.client.host)
+        strike_count = punishment_manager.strike_user(request.client.host, malicious_event.printEventDescription())
+
         error_response = f"Malicious request detected: {malicious_event.return_risks()}"
         if strike_count == 1:
             error_response += \
@@ -187,7 +130,6 @@ async def proxy(path: str, request: fastapi.Request):
 
         if _DEBUGGING:
             print(error_response)
-        punishment_manager.strike_user(request.client.host, malicious_event.printEventDescription())  # not DOS event
         return fastapi.Response(content=error_response, status_code=400)
 
     return await send_safe_packet(path, request)
@@ -195,6 +137,6 @@ async def proxy(path: str, request: fastapi.Request):
 
 if __name__ == "__main__":
     # Run the FastAPI app using uvicorn and specify the host and port to listen on
-    run(app, port=80)  # , ssl=ssl_context)
+    run("Woof:app", port=80, reload=True)  # , ssl=ssl_context)
     logger.close_debug_log()
     print('Ba bye')

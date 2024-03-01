@@ -6,9 +6,11 @@ import threading
 
 class SQLInjection(SecurityBreak):
     def __init__(self):
+        super().__init__()  # Call parent's constructor
         self.name = "SQL Injection"
+        self.debug_prints = False
 
-    async def checkThreats(self, request: fastapi.Request, clientIp: str):
+    async def check_threats(self, request: fastapi.Request, clientIp: str):
         """Check if the request contains SQL Injection
 
         Args:
@@ -27,14 +29,14 @@ class SQLInjection(SecurityBreak):
             matchBody = re.search(regex, param_value)
             if matchBody:
                 full_query = matchBody.group()
-                self.debugPrint(f"A sql statement was detected in the request params:{full_query}")
+                self.debug_print(f"A sql statement was detected in the request params:{full_query}")
                 return True, full_query
 
         for header, value in request.headers.items():
             matchHeader = re.search(regex, value)
             if matchHeader:
                 full_query = matchHeader.group()
-                self.debugPrint(f"A sql statement was detected in the request headers:{full_query}")
+                self.debug_print(f"A sql statement was detected in the request headers:{full_query}")
                 return True, full_query
 
         body = await request.body()
@@ -42,14 +44,17 @@ class SQLInjection(SecurityBreak):
             matchHeader = re.search(regex, str(body))
             if matchHeader:
                 full_query = matchHeader.group()
-                self.debugPrint(f"A sql statement was detected in the request body:{full_query}")
+                self.debug_print(f"A sql statement was detected in the request body:{full_query}")
                 return True, full_query
 
         return False, None
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
-    def debugPrint(self, text: str):
-        if self.debugPrint:
+    def get_json_name(self):  # json type name, and not the name for displaying
+        return 'SQL_Injection'
+
+    def debug_print(self, text: str):
+        if self.debug_prints:
             print('[SQL Injection debug] ' + text)

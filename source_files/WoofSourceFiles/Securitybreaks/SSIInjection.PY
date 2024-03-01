@@ -1,13 +1,15 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
 import re
 import fastapi
+from urllib.parse import unquote
 
 
 class SSIInjection(SecurityBreak):
     def __init__(self):
+        super().__init__()  # Call parent's constructor
         self.name = "SSI Injection"
 
-    async def checkThreats(self, request: fastapi.Request, clientIp: str):
+    async def check_threats(self, request: fastapi.Request, clientIp: str):
         """Function to check if a request contains SSIi (Server-Side Includes Injection) characters.
 
         Args:
@@ -19,16 +21,25 @@ class SSIInjection(SecurityBreak):
 
         """
         request_data = request.query_params
+        body = await request.body()
+        decoded_text = unquote(body.decode())
+        print(decoded_text)
         for param_name, param_value in request_data.items():
             if self.is_text_ssii(param_value):
                 return True, param_value
 
+        if self.is_text_ssii(body.decode()) or self.is_text_ssii(decoded_text):
+            return True, "SII injection in body"
+
         return False, None
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
-    def is_text_ssii(self, text: object) -> object:
+    def get_json_name(self):  # json type name, and not the name for displaying
+        return 'SSI_Injection'
+
+    def is_text_ssii(self, text: object) -> bool:
         """Function to check if a string contains SSI injection (Server-Side Includes Injection) characters.
 
         Args:
@@ -37,4 +48,4 @@ class SSIInjection(SecurityBreak):
         Returns:
             bool: True - SSIi detected, False - Safe string.
         """
-        return re.compile("<!--#(.*?)-->").match(text)
+        return bool(re.search("<!--#(.*?)-->", text))

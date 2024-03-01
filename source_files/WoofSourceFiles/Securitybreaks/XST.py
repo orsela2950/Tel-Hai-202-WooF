@@ -4,9 +4,10 @@ import fastapi
 
 class XST(SecurityBreak):
     def __init__(self):
-     self.name = "Cross Site Tracing (XST)"
-    
-    async def checkThreats(self, request: fastapi.Request, clientIp : str):
+        super().__init__()  # Call parent's constructor
+        self.name = "Cross Site Tracing (XST)"
+
+    async def check_threats(self, request: fastapi.Request, clientIp : str):
         """Function check if HTTP request contains Cross Site Tracing (XST) attack,
         by checking if the request method is TRACE.
 
@@ -20,5 +21,8 @@ class XST(SecurityBreak):
         """
         return request.method == "TRACE" , f"{request.method} : {request.url}"
     
-    def getName(self):
+    def get_name(self):
         return self.name
+
+    def get_json_name(self):  # json type name, and not the name for displaying
+        return 'XST'

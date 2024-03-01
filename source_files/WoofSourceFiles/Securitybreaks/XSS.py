@@ -1,6 +1,8 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
 import fastapi
+from typing import Tuple
 import os
+from urllib.parse import unquote
 
 blocked_content_types = ['text/html', 'application/javascript', 'application/x-shockwave-flash', 'application/xml',
                          'application/x-www-form-urlencoded']
@@ -9,38 +11,55 @@ blocked_content_types = ['text/html', 'application/javascript', 'application/x-s
 # File usage:
 xss_malicious_list_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'XSS_Malicious.txt')
 with open(xss_malicious_list_path, 'r') as f:
-    blocked_keyword_list = f.readlines()
+    file_list = f.readlines()
+    blocked_keyword_list = [(word.replace('\n', '')) for word in file_list]
     f.close()
 
 
 class XSS(SecurityBreak):
     def __init__(self):
+        super().__init__()  # Call parent's constructor
         self.name = "Cross Site Scripting (XSS)"
-        self.debugPrints = False
+        self.debug_prints = False
 
-    async def checkThreats(self, request: fastapi.Request, clientIp: str):
+    async def check_threats(self, request: fastapi.Request, clientIp: str) -> Tuple[bool, str]:
         """Check if the request contains XSS Attack
 
         Args:
-            request (fastapi.Request): the request to check (as recieved from client)
-            clientIp (str): the ip of this request sender
+            request (fastapi.Request): the request to check (as received from the client)
+            clientIp (str): the IP of this request sender
 
         Returns:
             (Bool, str): true for threats found false for safe packet, a summary of the found attack if found or none
         """
 
-        # check the content type for not allowed content types
+        # Check the content type for not allowed content types
         if ('Content-Type' in request.headers.keys()) and (
-                request.headers['Content-Type'].lower() in blocked_content_types):
-            self.debugPrint('Content type is not allowed: ' + str(request.headers['Content-Type']))
-            return True, 'Content type : ' + str(request.headers['Content-Type'])
+                request.headers['content-type'].lower() in blocked_content_types):
+            self.debug_print('Content type is not allowed: ' + str(request.headers['content-type']))
+            return True, 'Content type : ' + str(request.headers['content-type'])
 
+        # Check query parameters for blocked keywords
         for param_name, param_value in request.query_params.items():
             if True in (word in param_value for word in blocked_keyword_list):
-                self.debugPrint('blocked a packet because it cannot contain "' + param_value + '"')
-                return True, 'The packet cant contain "' + param_value + '"'
+                self.debug_print('Blocked a packet because it cannot contain "' + param_value + '"')
+                return True, 'The packet can\'t contain "' + param_value + '"'
 
-        return False, None
+        # Check request body for XSS
+        body = await request.body()
+        decoded_text = unquote(body.decode())
+        word_in_body_list = [word for word in blocked_keyword_list if word in body.decode()]
+        word_in_decode_body_list = [word for word in blocked_keyword_list if word in str(decoded_text)]
+
+        if word_in_body_list:
+            self.debug_print('Blocked a packet because it contains XSS in the body')
+            return True, f'The packet contains XSS param "{word_in_body_list}" in the body'
+
+        if word_in_decode_body_list:
+            self.debug_print('Blocked a packet because it contains XSS in the body')
+            return True, f'The packet contains XSS param "{word_in_decode_body_list}" in the body'
+
+        return False, ""
 
     def InPacket(self, request: fastapi.Request, word: str):
         """checks if a word/phrase is in the packet
@@ -48,7 +67,7 @@ class XSS(SecurityBreak):
         Args:
             request (fastapi.Request): the packet
             word (str): the string
-            
+
         Returns:
             (Bool): weather the word is in the packet or not
         """
@@ -61,9 +80,12 @@ class XSS(SecurityBreak):
 
         return False
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
-    def debugPrint(self, text: str):
-        if self.debugPrint:
+    def get_json_name(self):  # json type name, and not the name for displaying
+        return 'XSS'
+
+    def debug_print(self, text: str):
+        if self.debug_prints:
             print('[XSS debug] ' + text)

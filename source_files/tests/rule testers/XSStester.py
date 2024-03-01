@@ -15,6 +15,6 @@ input()
 jsData = {
     "payload": '</progress>',
     "another": "</progress>"}
-ans = requests.post("http://testwaf202.com:8000", data=jsData)
+ans = requests.post("http://testwaf202.com", data=jsData)
 print("should not work: " + str(ans.status_code) + " | content: " + str(ans.content))
 input()

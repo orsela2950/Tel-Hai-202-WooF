@@ -1,0 +1,180 @@
+[[logs]]
+timestamp = "2024-01-28 20:06:19"
+client_ip = "127.0.0.1"
+host = "127.0.0.1"
+risks = [ "HTTP Host Header Injection",]
+
+[[logs]]
+timestamp = "2024-01-30 18:17:28"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+[[logs]]
+timestamp = "2024-02-21 18:13:33"
+client_ip = "127.0.0.1"
+host = "127.0.0.1"
+risks = [ "HTTP Host Header Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-21 18:17:05"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+
+[[logs]]
+timestamp = "2024-02-21 18:23:42"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "HTTP Parameter Pollution",]
+
+
+[[logs]]
+timestamp = "2024-02-24 17:10:49"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 17:23:44"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 17:32:51"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 18:01:46"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 18:03:19"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-24 18:25:16"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+
+[[logs]]
+timestamp = "2024-02-24 20:01:44"
+client_ip = "127.0.0.1"
+host = "127.0.0.1"
+risks = [ "HTTP Host Header Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-26 13:48:43"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+
+[[logs]]
+timestamp = "2024-02-26 18:43:09"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SQL Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-26 18:47:44"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SQL Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-26 18:56:03"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-26 20:45:10"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos", "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-26 20:53:34"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+
+[[logs]]
+timestamp = "2024-02-27 21:41:45"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Open Redirect Vulnerability",]
+
+
+[[logs]]
+timestamp = "2024-02-29 12:42:46"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Ddos",]
+
+
+[[logs]]
+timestamp = "2024-02-29 13:27:26"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Cross Site Scripting (XSS)",]
+
+
+[[logs]]
+timestamp = "2024-02-29 13:29:20"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "Cross Site Scripting (XSS)",]
+
+
+[[logs]]
+timestamp = "2024-02-29 22:19:54"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SSI Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-29 22:20:14"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SSI Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-29 22:20:30"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SSI Injection",]
+
+
+[[logs]]
+timestamp = "2024-02-29 22:20:37"
+client_ip = "127.0.0.1"
+host = "testwaf202.com"
+risks = [ "SSI Injection",]
+
+
