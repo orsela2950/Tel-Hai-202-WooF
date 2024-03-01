@@ -18,7 +18,6 @@ before_script:
   - pip install fastapi
   - pip install aiohttp
   - pip install uvicorn
-  - pip install sqlite3
 
 test:
   script:
