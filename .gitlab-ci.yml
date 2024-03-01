@@ -1,12 +1,14 @@
 # The Docker image that will be used to build your app
 image: python:3.x
+
 # Functions that should be executed before the build script is run
 before_script: []
+
 pages:
   script:
-    - "- pip install -r libs.txt"
-    - python source_files\WoofSourceFiles\Woof.py
-    - python source_files\WoofManagerPanel\ManagerPanel.py
+    - pip install -r libs.txt  # Fix: Remove the unnecessary '-'
+    - python source_files/WoofSourceFiles/Woof.py  # Fix: Use '/' for path separation
+    - python source_files/WoofManagerPanel/ManagerPanel.py  # Fix: Use '/' for path separation
   artifacts:
     paths:
       # The folder that contains the files to be exposed at the Page URL
@@ -14,4 +16,4 @@ pages:
   rules:
     # This ensures that only pushes to the default branch will trigger
     # a pages deploy
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'  # Fix: Add quotes around the condition
