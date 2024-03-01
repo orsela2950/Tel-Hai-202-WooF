@@ -1,12 +1,14 @@
 from Securitybreaks.SecurityBreak import SecurityBreak
 import fastapi
 import re
-import  threading
+import threading
+
+
 class SQLInjection(SecurityBreak):
     def __init__(self):
-     self.name = "SQL Injection"
-    
-    async def checkThreats(self, request: fastapi.Request, clientIp : str):
+        self.name = "SQL Injection"
+
+    async def checkThreats(self, request: fastapi.Request, clientIp: str):
         """Check if the request contains SQL Injection
 
         Args:
@@ -17,24 +19,23 @@ class SQLInjection(SecurityBreak):
             (Bool): true for threats found false for safe packet
         """
 
-        regex = r"(?i)\b(?:SELECT|UPDATE|DELETE|INSERT\s+INTO|CREATE\s+(?:DATABASE|TABLE|INDEX|VIEW)|ALTER\s+(?:DATABASE|TABLE)|DROP\s+(?:TABLE|INDEX)|WHERE|FROM|JOIN|ON|AS|GROUP\s+BY|HAVING|ORDER\s+BY|LIMIT|OFFSET)\b"
-        
+        regex = (r"(?i)\b(?:SELECT|UPDATE|DELETE|INSERT\s+INTO|CREATE\s+(?:DATABASE|TABLE|INDEX|VIEW)|ALTER\s+("
+                 r"?:DATABASE|TABLE)|DROP\s+(?:TABLE|INDEX)|WHERE|FROM|JOIN|ON|AS|GROUP\s+BY|HAVING|ORDER\s+BY|LIMIT"
+                 r"|OFFSET)\b")
 
         for param_name, param_value in request.query_params.items():
             matchBody = re.search(regex, param_value)
             if matchBody:
                 full_query = matchBody.group()
                 self.debugPrint(f"A sql statement was detected in the request params:{full_query}")
-                return (True, full_query)
-            
+                return True, full_query
 
         for header, value in request.headers.items():
             matchHeader = re.search(regex, value)
             if matchHeader:
                 full_query = matchHeader.group()
                 self.debugPrint(f"A sql statement was detected in the request headers:{full_query}")
-                return True,full_query
-
+                return True, full_query
 
         body = await request.body()
         if body:
@@ -44,11 +45,11 @@ class SQLInjection(SecurityBreak):
                 self.debugPrint(f"A sql statement was detected in the request body:{full_query}")
                 return True, full_query
 
-        return (False, None)
-    
+        return False, None
+
     def getName(self):
         return self.name
-    
-    def debugPrint(self, text :str):
+
+    def debugPrint(self, text: str):
         if self.debugPrint:
             print('[SQL Injection debug] ' + text)

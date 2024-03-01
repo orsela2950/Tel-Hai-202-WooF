@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waf Manager Panel</title>
+    <link rel="stylesheet" href="menu_styles.css">
+</head>
+<body>
+ <nav id="navbar">
+  <ul class="navbar-items flexbox-col">
+    <li class="navbar-logo flexbox-left">
+      <a class="navbar-item-inner flexbox" href="/pages/menu.html">
+        <img src="/pages/WoofLogoTrimSmall.jpeg" >
+      </a>
+    </li>
+    <li class="navbar-item flexbox-left">
+      <a class="navbar-item-inner flexbox-left" onclick="fetchSettings()">
+        <div class="navbar-item-inner-icon-wrapper flexbox">
+          <ion-icon name="settings-outline"></ion-icon>
+        </div>
+        <span class="link-text">Settings</span>
+      </a>
+    </li>
+    <li class="navbar-item flexbox-left">
+      <a class="navbar-item-inner flexbox-left" href="/pages/logs.html">
+        <div class="navbar-item-inner-icon-wrapper flexbox">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </div>
+        <span class="link-text">Logs</span>
+      </a>
+    </li>
+    <li class="navbar-item flexbox-left">
+      <a class="navbar-item-inner flexbox-left" href="/pages/security_logs.html">
+        <div class="navbar-item-inner-icon-wrapper flexbox">
+          <ion-icon name="document-lock-outline"></ion-icon>
+        </div>
+        <span class="link-text">Security Logs</span>
+      </a>
+    </li>
+    <li class="navbar-item flexbox-left">
+      <a class="navbar-item-inner flexbox-left" onclick="fetchRules()">
+        <div class="navbar-item-inner-icon-wrapper flexbox">
+          <ion-icon name="briefcase-outline"></ion-icon>
+        </div>
+        <span class="link-text">Rules</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+ <div class="container text-block">
+  <h1>Waf Settings</h1>
+  <form id="settingsForm" action="/submit-settings" method="POST">
+    <label for="server_host">Hostname:</label>
+    <input type="text" id="server_host" name="server_host">
+    <br><br>
+
+    <label for="ip">IP Address:</label>
+    <input type="text" id="ip" name="ip">
+    <br><br>
+
+    <label for="port">Port:</label>
+    <input type="number" id="port" name="port">
+    <br><br>
+
+    <button type="submit">Submit</button>
+    </form>
+   </div>
+<script>
+// Function to parse the URL parameter and set text block values
+    function setTextBlockValuesFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const settingsData = JSON.parse(urlParams.get('settings'));
+
+        // Use settingsData to set text block values
+        for (const key in settingsData) {
+            const inputElement = document.getElementById(key);
+            if (inputElement) {
+                inputElement.value = settingsData[key];
+            }
+        }
+    }
+
+  // Call the function when the page loads
+  setTextBlockValuesFromURL();
+
+
+      async function fetchRules() {
+          try {
+              const response = await fetch('/check-switches');
+              window.location.href = (await response.json()).url;
+          } catch (error) {
+              console.error('Error fetching rules:', error);
+              // Handle the error gracefully, e.g., display an error message to the user
+          }
+      }
+
+        async function fetchSettings() {
+          try {
+              const response = await fetch('/check-settings');
+              window.location.href = (await response.json()).url;
+          } catch (error) {
+              console.error('Error fetching rules:', error);
+              // Handle the error gracefully, e.g., display an error message to the user
+          }
+      }
+</script>
+  </body>
+</html>

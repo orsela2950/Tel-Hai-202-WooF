@@ -1,59 +1,37 @@
-import datetime
-import re
-import fastapi
+from fastapi import Request
 import Securitybreaks.SecurityBreak as SecurityBreak
 from Security.SecurityEvent import SecurityEvent
-import os
-from pathlib import Path
-from elasticsearch import Elasticsearch
+from logger import Logger
+
+
+def get_attack_name(rule: SecurityBreak):
+    # Get the name of the attack
+    attack_name = rule.getName()
+    return attack_name
+
 
 class SecurityRuleEngine:
-    def __init__(self,ElasticSearchDB:Elasticsearch):
-        self.rules = [] # this will be a list of the security break interface object
-        self.es=ElasticSearchDB
+    def __init__(self, logger: Logger):
+        self.rules = []  # this will be a list of the security break interface object
+        self.logger = logger
+
     def add_rule(self, rule: SecurityBreak):
         self.rules.append(rule)
 
-    async def is_request_malicious(self, request : fastapi.Request, clientIp : str):
+    def clear_rules(self):
+        self.rules.clear()
+
+    async def is_request_malicious(self, request: Request, client_ip: str):
         request_url = request.url.path
         event = SecurityEvent(request)
         
         for rule in self.rules:
-            check= await rule.checkThreats(request, clientIp)
-            if check[0] :
+            print('checking:', rule.getName()+'...')
+            check = await rule.checkThreats(request, client_ip)
+            if check[0]:
                 # The request is malicious, so log it and block it
-                event.addBreak(rule)
-                print(rule.getName(),check[1])
-        if event.thereIsRisk(): self.log_security_break(event)        
+                event.add_break(rule)
+                print(rule.getName(), check[1])
+        if event.is_there_risk():
+            self.logger.log_security_toml(event)
         return event
-    def get_attack_name(self, rule):
-        # Get the name of the attack
-        attack_name = rule.getName()
-        return attack_name
-
-    def log_security_break(self,event): 
-        # Log the security break
-        with self.findFile_Write("securityEvents.log","source_files\\WoofSourceFiles\\Logs") as log_file:
-            log_file.write(event.printEventDescription())
-            log_file.close()
-        
-        
-        log_data = {
-            "@timestamp": datetime.datetime.now().isoformat(),
-            "client_ip": event.ip,
-            "request_Host": str(event.request.headers.get("host")),
-            "security_breaks": [str(risk.getName()) for risk in event.SecurityRisks]
-        }
-
-        # Index the log data to Elasticsearch
-        self.es.index(index="security_events", body=log_data)
-    
-    def findFile_Write(self,name, path):
-        filePath=""
-        for root, dirs, files in os.walk(os.getcwd()):
-            if name in files:
-                return open(os.path.join(root, name),"a")
-        return open(path+"\\"+name,"w")
-        
-        
-            

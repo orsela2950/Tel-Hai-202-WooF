@@ -2,37 +2,23 @@ import json
 import filelock
 import os
 
-"""
-commit for now - will be deleted
-# the original server url
-MAIN_URL = "http://testwaf202.com"
-
-URL_TO_IP = {
-    "http://testwaf202.com": ("127.0.0.1", 80)
-}
-
-# the servers ip and operation port
-IP = "127.0.0.1"
-PORT = 8000
-
-# dont touch-
-URL_IP = 'http://' + IP
-
-MANAGER_PANEL_HOST = 'wafmanagerpanel202.com'
-"""
+# File usage:
+current_dir = os.path.dirname(os.path.realpath(__file__))
+# os.path.join(current_dir, 'filename')
 
 
 def get_json_argument(key: str):
-    with filelock.FileLock("server_properties.json.lock"):
-        with findFile_Read("server_properties.json","source_files\\WoofSourceFiles") as f:
+    with filelock.FileLock(os.path.join(current_dir, 'server_properties.json.lock')):
+        with open(os.path.join(current_dir, 'server_properties.json'), 'r') as f:
             return json.load(f)[key]
 
-def findFile_Read(name, path):
-    filePath=""
-    for root, dirs, files in os.walk(os.getcwd()):
-        if name in files:
-            return open(os.path.join(root, name),"r")
-    return open(path+"\\"+name,"a")        
+
+# def findFile_Read(name, path):
+#     filePath=""
+#     for root, dirs, files in os.walk(os.getcwd()):
+#         if name in files:
+#             return open(os.path.join(root, name),"r")
+#     return open(path+"\\"+name,"a")
 
 
 def get_server_host():
@@ -40,11 +26,11 @@ def get_server_host():
 
 
 def get_server_ip():
-    return get_json_argument('server_ips_ports')[0][0]
+    return get_json_argument('ip')
 
 
 def get_server_port():
-    return get_json_argument('server_ips_ports')[0][1]
+    return get_json_argument('port')
 
 
 def get_server_ipead_url():
@@ -67,6 +53,7 @@ def remove_scheme(url: str):
     if url.lower().startswith("https://"):
         return url[8:]
     return url
+
 
 if __name__ == '__main__':
     # tests
